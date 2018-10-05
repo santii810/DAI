@@ -21,24 +21,25 @@ public class FileServiceTask implements Runnable {
 		try (Socket socket = this.socket) {
 			InputStream inputStream = socket.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			File file = new File(br.readLine());
+			String fileName;
+			while ((fileName = br.readLine()) != null && fileName.equals("quit")) {
+				File file = new File(fileName);
+				DataOutputStream dataOutputStrem = new DataOutputStream(socket.getOutputStream());
+				if (file.isFile() && file.canRead()) {
+					dataOutputStrem.writeLong(file.length());
 
-			DataOutputStream dataOutputStrem = new DataOutputStream(socket.getOutputStream());
-			if (file.isFile() && file.canRead()) {
-				dataOutputStrem.writeLong(file.length());
+					try (FileInputStream fileIn = new FileInputStream(file)) {
 
-				try (FileInputStream fileIn = new FileInputStream(file)) {
-
-					int read;
-					while ((read = fileIn.read()) != -1) {
-						dataOutputStrem.write(read);
+						int read;
+						while ((read = fileIn.read()) != -1) {
+							dataOutputStrem.write(read);
+						}
 					}
+				} else {
+					dataOutputStrem.writeLong(-1);
 				}
-			} else {
-				dataOutputStrem.writeLong(-1);
+				dataOutputStrem.flush();
 			}
-			dataOutputStrem.flush();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

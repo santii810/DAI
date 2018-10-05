@@ -7,9 +7,7 @@ public class dojo2 {
 	public static void main(String args[]) {
 		try (ServerSocket serverSocket = new ServerSocket(54321)) {
 			while (true) {
-					new Thread(new FileServiceTask(serverSocket.accept())).start();
-					
-				}
+				new Thread(new FileServiceTask(serverSocket.accept())).start();
 			}
 		} catch (IOException e) {
 			System.out.println("Error en el servicor: " + e.getMessage());
