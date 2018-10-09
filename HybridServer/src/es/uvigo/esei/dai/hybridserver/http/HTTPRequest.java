@@ -39,14 +39,10 @@ public class HTTPRequest {
 		try {
 			method = HTTPRequestMethod.valueOf(firstLine[0]);
 			resourceChain = firstLine[1];
-			resourceName = firstLine[1].split("\\?")[0].substring(1);
-			resourcePath = resourceName.split("\\/");
 			httpVersion = firstLine[2];
-			String parametersString[] = firstLine[1].split("\\?")[1].split("&");
-			for (String itParameters : parametersString) {
-				String[] parameters = itParameters.split("=");
-				resourceParameters.put(parameters[0], parameters[1]);
-			}
+
+			resourceName = resourceChain.split("\\?")[0].substring(1);
+			resourcePath = resourceName.split("\\/");
 
 			while ((readed = br.readLine()) != null && !readed.equals("")) {
 				String hp[] = readed.split(": ");
@@ -58,6 +54,16 @@ public class HTTPRequest {
 				contentLength = Integer.parseInt(headerParameters.get("Content-Length"));
 			else
 				contentLength = 0;
+
+			if (contentLength == 0) {
+				String parametersString[] = resourceChain.split("\\?")[1].split("&");
+				for (String itParameters : parametersString) {
+					String[] parameters = itParameters.split("=");
+					resourceParameters.put(parameters[0], parameters[1]);
+				}
+			} else {
+				// TODO ver content
+			}
 
 		} catch (Exception e) {
 			System.out.println("error " + e.getMessage());
