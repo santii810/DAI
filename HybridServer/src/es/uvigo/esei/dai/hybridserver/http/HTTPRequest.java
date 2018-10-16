@@ -16,7 +16,7 @@ public class HTTPRequest {
 	private BufferedReader br;
 	private HTTPRequestMethod method;
 	private String resourceChain;
-	private String[] resourcePath;
+	private String[] resourcePath = new String[0];
 	private String resourceName;
 	private Map<String, String> resourceParameters;
 	private String httpVersion;
@@ -42,9 +42,11 @@ public class HTTPRequest {
 			httpVersion = firstLine[2];
 
 			resourceName = resourceChain.split("\\?")[0].substring(1);
-			resourcePath = resourceName.split("\\/");
+			if (!resourceName.isEmpty())
+				resourcePath = resourceName.split("\\/");
 
 			while ((readed = br.readLine()) != null && !readed.equals("")) {
+				System.out.println(readed);
 				String hp[] = readed.split(": ");
 				headerParameters.put(hp[0], hp[1]);
 			}
@@ -54,15 +56,24 @@ public class HTTPRequest {
 				contentLength = Integer.parseInt(headerParameters.get("Content-Length"));
 			else
 				contentLength = 0;
+			
+			if (contentLength != 0) {
+				if (method == method.GET) {
+					System.out.println(resourceChain);
+					String parametersString[] = resourceChain.split("\\?")[1].split("&");
+					for (String itParameters : parametersString) {
+						String[] parameters = itParameters.split("=");
+						resourceParameters.put(parameters[0], parameters[1]);
+					}
+				} else {
+					String parametersString[] = content.split("&");
+					for (int i = 0; i < parametersString.length; i++) {
+						resourceParameters.put(parametersString[i].split("=")[0], parametersString[i].split("=")[1]);
 
-			if (contentLength == 0) {
-				String parametersString[] = resourceChain.split("\\?")[1].split("&");
-				for (String itParameters : parametersString) {
-					String[] parameters = itParameters.split("=");
-					resourceParameters.put(parameters[0], parameters[1]);
+					}
 				}
 			} else {
-				// TODO ver content
+
 			}
 
 		} catch (Exception e) {
