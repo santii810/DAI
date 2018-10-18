@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,33 +47,38 @@ public class HTTPRequest {
 				resourcePath = resourceName.split("\\/");
 
 			while ((readed = br.readLine()) != null && !readed.equals("")) {
-				System.out.println(readed);
 				String hp[] = readed.split(": ");
 				headerParameters.put(hp[0], hp[1]);
 			}
 
-			content = br.readLine();
-			if (headerParameters.containsKey("Content-Length"))
+			if (headerParameters.containsKey("Content-Length")) {
 				contentLength = Integer.parseInt(headerParameters.get("Content-Length"));
-			else
-				contentLength = 0;
-			
-			if (contentLength != 0) {
-				if (method == method.GET) {
-					System.out.println(resourceChain);
+
+				//cambiar forma de leer
+				char[] contentChar = new char[contentLength]; 
+				br.read(contentChar);
+				content = String.valueOf(contentChar);
+				System.out.println(content);
+				if (headerParameters.containsKey("Content-Type")) {
+					String contentType = headerParameters.get("Content-Type");
+					if (contentType != null && contentType.startsWith("application/x-www-form-urlencoded")) {
+						content = URLDecoder.decode(content, "UTF-8");
+					}
+				}
+				System.out.println(content);
+				
+				String parametersString[] = content.split("&");
+				for (int i = 0; i < parametersString.length; i++) {
+					resourceParameters.put(parametersString[i].split("=")[0], parametersString[i].split("=")[1]);
+				}
+			} else {
+				if (resourceChain.contains("?")) {
 					String parametersString[] = resourceChain.split("\\?")[1].split("&");
 					for (String itParameters : parametersString) {
 						String[] parameters = itParameters.split("=");
 						resourceParameters.put(parameters[0], parameters[1]);
 					}
-				} else {
-					String parametersString[] = content.split("&");
-					for (int i = 0; i < parametersString.length; i++) {
-						resourceParameters.put(parametersString[i].split("=")[0], parametersString[i].split("=")[1]);
-
-					}
 				}
-			} else {
 
 			}
 
