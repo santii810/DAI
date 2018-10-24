@@ -8,22 +8,31 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import es.uvigo.esei.dai.hybridserver.model.dao.HTMLpagesDAO;
+import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
+import es.uvigo.esei.dai.hybridserver.threadmanagement.ServiceThread;
 
 public class HybridServer {
 	private static final int SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
+	private int maxClients;
+	private PagesDAO pagesDAO;
 
 	public HybridServer() {
-		// TODO Auto-generated constructor stub
+		this.maxClients = 50;
 	}
 
 	public HybridServer(Map<String, String> pages) {
-		// TODO Auto-generated constructor stub
+		this.maxClients = 50;
+		pagesDAO = new HTMLpagesDAO(pages);
 	}
 
 	public HybridServer(Properties properties) {
-		// TODO Auto-generated constructor stub
+		this.maxClients = 50;
 	}
 
 	public int getPort() {
@@ -35,29 +44,12 @@ public class HybridServer {
 			@Override
 			public void run() {
 				try (final ServerSocket serverSocket = new ServerSocket(SERVICE_PORT)) {
+					ExecutorService threadPool = Executors.newFixedThreadPool(maxClients);
 					while (true) {
-						try (Socket socket = serverSocket.accept()) {
-							if (stop)
-								break;
-
-							BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
-							String line;
-							while ((line = br.readLine()) != null && line.trim().isEmpty()) {
-								System.out.println(line);
-							}
-
-							// Responder al cliente
-
-							String webPage = "<html><body><h1>Hybrid Server</h1></body></html>";
-							OutputStream outputStream = socket.getOutputStream();
-							outputStream.write("HTTP/1.1 200 OK\r\n".getBytes());
-							String contentLength = String.format("Content-Length:%d\r\n", webPage.length());
-							outputStream.write(contentLength.getBytes());
-							outputStream.write("\r\n".getBytes());
-							outputStream.write(webPage.getBytes());
-							outputStream.flush();
-
-						}
+						Socket socket = serverSocket.accept();
+						if (stop)
+							break;
+						threadPool.execute(new ServiceThread(socket, pagesDAO));
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -85,5 +77,9 @@ public class HybridServer {
 		}
 
 		this.serverThread = null;
+	}
+
+	private PagesDAO getPagesDAO() {
+		return pagesDAO;
 	}
 }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,55 +39,63 @@ public class HTTPRequest {
 		headerParameters = new LinkedHashMap<>();
 
 		try {
-			method = HTTPRequestMethod.valueOf(firstLine[0]);
-			resourceChain = firstLine[1];
-			httpVersion = firstLine[2];
-
-			resourceName = resourceChain.split("\\?")[0].substring(1);
-			if (!resourceName.isEmpty())
-				resourcePath = resourceName.split("\\/");
+			readFirstLine(firstLine);
 
 			while ((readed = br.readLine()) != null && !readed.equals("")) {
 				String hp[] = readed.split(": ");
 				headerParameters.put(hp[0], hp[1]);
 			}
 
-			if (headerParameters.containsKey("Content-Length")) {
-				contentLength = Integer.parseInt(headerParameters.get("Content-Length"));
+			resourceName = resourceChain.split("\\?")[0].substring(1);
+			if (!resourceName.isEmpty())
+				resourcePath = resourceName.split("\\/");
 
-				//cambiar forma de leer
-				char[] contentChar = new char[contentLength]; 
-				br.read(contentChar);
-				content = String.valueOf(contentChar);
-				System.out.println(content);
-				if (headerParameters.containsKey("Content-Type")) {
-					String contentType = headerParameters.get("Content-Type");
-					if (contentType != null && contentType.startsWith("application/x-www-form-urlencoded")) {
-						content = URLDecoder.decode(content, "UTF-8");
-					}
-				}
-				System.out.println(content);
-				
-				String parametersString[] = content.split("&");
-				for (int i = 0; i < parametersString.length; i++) {
-					resourceParameters.put(parametersString[i].split("=")[0], parametersString[i].split("=")[1]);
-				}
+			if (headerParameters.containsKey("Content-Length")) {
+				readParamsFromContent();
 			} else {
 				if (resourceChain.contains("?")) {
-					String parametersString[] = resourceChain.split("\\?")[1].split("&");
-					for (String itParameters : parametersString) {
-						String[] parameters = itParameters.split("=");
-						resourceParameters.put(parameters[0], parameters[1]);
-					}
+					readParamsFromResourceChain();
 				}
-
 			}
-
 		} catch (Exception e) {
 			System.out.println("error " + e.getMessage());
 			throw new HTTPParseException("HTTP Method incorrect.");
 		}
 
+	}
+
+	private void readParamsFromResourceChain() {
+		String parametersString[] = resourceChain.split("\\?")[1].split("&");
+		for (String itParameters : parametersString) {
+			String[] parameters = itParameters.split("=");
+			resourceParameters.put(parameters[0], parameters[1]);
+		}
+	}
+
+	private void readParamsFromContent() throws IOException, UnsupportedEncodingException {
+		contentLength = Integer.parseInt(headerParameters.get("Content-Length"));
+
+		char[] contentChar = new char[contentLength];
+		br.read(contentChar);
+		content = String.valueOf(contentChar);
+
+		if (headerParameters.containsKey("Content-Type")) {
+			String contentType = headerParameters.get("Content-Type");
+			if (contentType != null && contentType.startsWith("application/x-www-form-urlencoded")) {
+				content = URLDecoder.decode(content, "UTF-8");
+			}
+		}
+
+		String parametersString[] = content.split("&");
+		for (int i = 0; i < parametersString.length; i++) {
+			resourceParameters.put(parametersString[i].split("=")[0], parametersString[i].split("=")[1]);
+		}
+	}
+
+	private void readFirstLine(String[] firstLine) {
+		method = HTTPRequestMethod.valueOf(firstLine[0]);
+		resourceChain = firstLine[1];
+		httpVersion = firstLine[2];
 	}
 
 	public HTTPRequestMethod getMethod() {
