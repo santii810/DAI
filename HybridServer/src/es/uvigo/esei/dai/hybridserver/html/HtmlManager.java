@@ -43,31 +43,69 @@ public class HtmlManager {
 	}
 
 	private void manageDELETERequest() {
-		if (request.getResourceName().isEmpty()) {
-			welcomePage();
-		}
 	}
 
 	private void managePOSTRequest() {
-		// TODO Auto-generated method stub
+		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals("html")
+				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("uuid")) {
+			String uuidRequested = request.getResourceParameters().get("uuid");
+			if (pagesDAO.getHTMLPages().contains(uuidRequested)) {
+				
+			}else {
+				pagesDAO.addPage(request.getResourceParameters().get("uuid"));
+			}
 
+
+		} else {
+			response.setStatus(HTTPResponseStatus.S400);
+		}
 	}
 
 	private void manageGETRequest() {
-		// TODO Auto-generated method stub
-		welcomePage();
+		if (request.getResourceName().isEmpty()) {
+			welcomePage();
+		} else {
+			if (request.getResourceName().equals("html")) {
+				if (request.getResourceParameters().isEmpty()) {
+					// Muestro lista e paginas
+					response.setStatus(HTTPResponseStatus.S200);
+					response.setContent(this.buildHtml(pagesDAO.getHTMLPages()));
+				} else if (request.getResourceParameters().containsKey("uuid")) {
+					String uuidRequested = request.getResourceParameters().get("uuid");
+					if (pagesDAO.getHTMLPages().contains(uuidRequested)) {
+						// uuid correcto
+						response.setStatus(HTTPResponseStatus.S200);
+						response.setContent(buildHtml("<p>" + pagesDAO.getValue(uuidRequested) + "</p>"));
+					} else {
+						// uuid no conocido
+						response.setStatus(HTTPResponseStatus.S404);
+						response.setContent(buildHtml("<p> uuid no encontrado</p>"));
+					}
+				} else {
+					// Los parametros no contienen uuid
+					response.setStatus(HTTPResponseStatus.S400);
+				}
+			} else {
+				// Peticion distinta a html
+				response.setStatus(HTTPResponseStatus.S400);
+			}
+		}
 	}
 
 	private void welcomePage() {
 		response.setStatus(HTTPResponseStatus.S200);
-//		String webPage = "<html>" + "<head>" + "<meta charset=\"utf-8\">" + "</head>" + "<body>"
-//				+ "<h1>Hybrid Server</h1>" + "<h2>Santiago Gomez Vilar</h2>" + "<h2>Milagos Somoza Salinas</h2>"
-//				+ "</body>" + "</html>";
-		String webPage = "<head>" + "<meta charset=\"utf-8\">" + "</head>" + "<body>" + "<h1>Hybrid Server</h1>"
-				+ "<h2>Santiago Gomez Vilar</h2>" + "<h2>Milagos Somoza Salinas</h2>" + "</body>";
-		
-		
-		
-		response.setContent(webPage + pagesDAO.getHTMLPages());
+
+		System.out.println(response.getStatus().getCode());
+
+		String webPage = buildHtml(
+				"<h1>Hybrid Server</h1>" + "<h2>Santiago Gomez Vilar</h2>" + "<h2>Milagros Somoza Salinas</h2>");
+
+		response.setContent(webPage);
+//		response.setContent(webPage + pagesDAO.getHTMLPages());
 	}
+
+	private String buildHtml(String content) {
+		return "<html><head><meta charset=\"utf-8\"></head><body>\r\n" + content + "</body></html>";
+	}
+
 }

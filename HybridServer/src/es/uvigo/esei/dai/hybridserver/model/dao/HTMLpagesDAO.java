@@ -16,10 +16,20 @@ public class HTMLpagesDAO implements PagesDAO {
 		for (String page : pages.keySet()) {
 			toret.append("<li><a href=\"\">");
 			toret.append(page);
-			toret.append("</a></li>");
+			toret.append("</a></li>\r\n");
 		}
-		toret.append("</ul>");
+		toret.append("</ul>\r\n");
 		return toret.toString();
+	}
+
+	@Override
+	public String getValue(String key) {
+		return this.pages.get(key);
+	}
+
+	@Override
+	public void addPage(String key, String value) {
+		this.pages.put(key, value);
 	}
 
 }

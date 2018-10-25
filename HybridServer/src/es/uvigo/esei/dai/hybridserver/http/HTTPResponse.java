@@ -92,15 +92,19 @@ public class HTTPResponse {
 			message.append("Content-Length: ");
 			message.append(this.getContent().length());
 			message.append("\r\n\r\n");
+
 			message.append(this.getContent());
+
 		} else {
 			message.append("\r\n");
 		}
-
+		System.out.println(message.toString());
 		bw.write(message.toString());
 		bw.flush();
 
 	}
+
+
 
 	@Override
 	public String toString() {

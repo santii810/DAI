@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import es.uvigo.esei.dai.hybridserver.model.dao.HTMLpagesDAO;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
@@ -21,6 +22,7 @@ public class HybridServer {
 	private boolean stop;
 	private int maxClients;
 	private PagesDAO pagesDAO;
+	private ExecutorService threadPool;
 
 	public HybridServer() {
 		this.maxClients = 50;
@@ -41,10 +43,11 @@ public class HybridServer {
 
 	public void start() {
 		this.serverThread = new Thread() {
+
 			@Override
 			public void run() {
 				try (final ServerSocket serverSocket = new ServerSocket(SERVICE_PORT)) {
-					ExecutorService threadPool = Executors.newFixedThreadPool(maxClients);
+					threadPool = Executors.newFixedThreadPool(maxClients);
 					while (true) {
 						Socket socket = serverSocket.accept();
 						if (stop)
@@ -77,6 +80,17 @@ public class HybridServer {
 		}
 
 		this.serverThread = null;
+		
+		
+		threadPool.shutdownNow();
+		 
+		try {
+		  threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+		  e.printStackTrace();
+		}
+		
+		
 	}
 
 	private PagesDAO getPagesDAO() {
