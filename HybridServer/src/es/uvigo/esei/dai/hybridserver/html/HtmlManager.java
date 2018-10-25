@@ -1,6 +1,7 @@
 package es.uvigo.esei.dai.hybridserver.html;
 
 import java.io.OutputStream;
+import java.util.UUID;
 
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
@@ -50,11 +51,11 @@ public class HtmlManager {
 				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("uuid")) {
 			String uuidRequested = request.getResourceParameters().get("uuid");
 			if (pagesDAO.getHTMLPages().contains(uuidRequested)) {
-				
-			}else {
-				pagesDAO.addPage(request.getResourceParameters().get("uuid"));
-			}
 
+			} else {
+				UUID randomUuid = UUID.randomUUID();
+				pagesDAO.addPage(randomUuid.toString(), request.getResourceParameters().get("uuid"));
+			}
 
 		} else {
 			response.setStatus(HTTPResponseStatus.S400);
