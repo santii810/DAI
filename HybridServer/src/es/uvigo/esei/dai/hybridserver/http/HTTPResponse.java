@@ -87,7 +87,6 @@ public class HTTPResponse {
 				message.append(parameter);
 			}
 		}
-
 		if (this.getContent() != null) {
 			message.append("Content-Length: ");
 			message.append(this.getContent().length());
@@ -98,10 +97,8 @@ public class HTTPResponse {
 		} else {
 			message.append("\r\n");
 		}
-		System.out.println(message.toString());
 		bw.write(message.toString());
 		bw.flush();
-
 	}
 
 

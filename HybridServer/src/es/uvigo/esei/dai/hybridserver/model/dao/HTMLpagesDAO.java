@@ -32,4 +32,13 @@ public class HTMLpagesDAO implements PagesDAO {
 		this.pages.put(key, value);
 	}
 
+	public boolean containsUuid(String uuid) {
+		return pages.containsKey(uuid);
+	}
+
+	@Override
+	public void delete(String uuidRequested) {
+		this.pages.remove(uuidRequested);
+	}
+
 }

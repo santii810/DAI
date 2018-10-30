@@ -6,4 +6,8 @@ public interface PagesDAO {
 	String getValue(String key);
 
 	void addPage(String key, String value);
+
+	boolean containsUuid(String uuid);
+
+	void delete(String uuidRequested);
 }

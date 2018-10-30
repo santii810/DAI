@@ -35,28 +35,41 @@ public class HtmlManager {
 		case DELETE:
 			manageDELETERequest();
 			break;
-
 		default:
-			System.out.println("Request method not comtemplated");
 			break;
 		}
 
 	}
 
 	private void manageDELETERequest() {
-	}
-
-	private void managePOSTRequest() {
 		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals("html")
 				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("uuid")) {
 			String uuidRequested = request.getResourceParameters().get("uuid");
-			if (pagesDAO.getHTMLPages().contains(uuidRequested)) {
-
+			if (pagesDAO.containsUuid(uuidRequested)) {
+				pagesDAO.delete(uuidRequested);
+				response.setStatus(HTTPResponseStatus.S200);
+				response.setContent("<p> uuid eliminado </p>");
 			} else {
-				UUID randomUuid = UUID.randomUUID();
-				pagesDAO.addPage(randomUuid.toString(), request.getResourceParameters().get("uuid"));
+				response.setStatus(HTTPResponseStatus.S404);
+				response.setContent("<p> uuid no encontrado </p>");
 			}
+		}
 
+	}
+
+	private void managePOSTRequest() {
+		System.out.println(!request.getResourceParameters().isEmpty());
+		System.out.println(request.getResourceName().equals("html"));
+		System.out.println(!request.getResourceParameters().isEmpty());
+
+		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals("html")
+				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("html")) {
+			UUID randomUuid = UUID.randomUUID();
+			pagesDAO.addPage(randomUuid.toString(), request.getResourceParameters().get("html"));
+
+			response.setContent(
+					"<a href=\"html?uuid=" + randomUuid.toString() + "\">" + randomUuid.toString() + "</a>");
+			response.setStatus(HTTPResponseStatus.S200);
 		} else {
 			response.setStatus(HTTPResponseStatus.S400);
 		}
@@ -73,10 +86,11 @@ public class HtmlManager {
 					response.setContent(this.buildHtml(pagesDAO.getHTMLPages()));
 				} else if (request.getResourceParameters().containsKey("uuid")) {
 					String uuidRequested = request.getResourceParameters().get("uuid");
-					if (pagesDAO.getHTMLPages().contains(uuidRequested)) {
+					if (pagesDAO.containsUuid(uuidRequested)) {
 						// uuid correcto
 						response.setStatus(HTTPResponseStatus.S200);
-						response.setContent(buildHtml("<p>" + pagesDAO.getValue(uuidRequested) + "</p>"));
+//						response.setContent(buildHtml("<p>" + pagesDAO.getValue(uuidRequested) + "</p>"));
+						response.setContent(pagesDAO.getValue(uuidRequested));
 					} else {
 						// uuid no conocido
 						response.setStatus(HTTPResponseStatus.S404);
@@ -95,14 +109,9 @@ public class HtmlManager {
 
 	private void welcomePage() {
 		response.setStatus(HTTPResponseStatus.S200);
-
-		System.out.println(response.getStatus().getCode());
-
 		String webPage = buildHtml(
 				"<h1>Hybrid Server</h1>" + "<h2>Santiago Gomez Vilar</h2>" + "<h2>Milagros Somoza Salinas</h2>");
-
 		response.setContent(webPage);
-//		response.setContent(webPage + pagesDAO.getHTMLPages());
 	}
 
 	private String buildHtml(String content) {
