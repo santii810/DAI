@@ -1,9 +1,6 @@
 package es.uvigo.esei.dai.hybridserver;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
@@ -12,33 +9,52 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import es.uvigo.esei.dai.hybridserver.model.dao.HTMLpagesDAO;
+import es.uvigo.esei.dai.hybridserver.model.dao.DBPagesDAO;
+import es.uvigo.esei.dai.hybridserver.model.dao.MapPagesDAO;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 import es.uvigo.esei.dai.hybridserver.threadmanagement.ServiceThread;
 
 public class HybridServer {
-	private static final int SERVICE_PORT = 8888;
+	private static final String DEFAULT_PASS = "hsdbpass";
+	private static final String DEFAULT_USER = "hsdb";
+	private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/hstestdb";
+	private static final int DEFAULT_SERVICE_PORT = 8888;
 	private Thread serverThread;
 	private boolean stop;
-	private int maxClients;
+	private int numClients;
 	private PagesDAO pagesDAO;
 	private ExecutorService threadPool;
+	private int port;
+	private String dbUrl;
+	private String dbUser;
+	private String dbPassword;
 
 	public HybridServer() {
-		this.maxClients = 50;
+		this.numClients = 50;
+		this.port = DEFAULT_SERVICE_PORT;
+		this.dbUrl = DEFAULT_URL;
+		this.dbUser = DEFAULT_USER;
+		this.dbPassword = DEFAULT_PASS;
+		this.pagesDAO = new DBPagesDAO(dbUrl, dbUser, dbPassword);
 	}
 
 	public HybridServer(Map<String, String> pages) {
-		this.maxClients = 50;
-		pagesDAO = new HTMLpagesDAO(pages);
+		this.numClients = 50;
+		this.port = DEFAULT_SERVICE_PORT;
+		pagesDAO = new MapPagesDAO(pages);
 	}
 
 	public HybridServer(Properties properties) {
-		this.maxClients = 50;
+		this.numClients = 50;
+		this.port = Integer.parseInt(properties.getProperty("port", "8888"));
+		this.dbUrl = properties.getProperty("db.url", DEFAULT_URL);
+		this.dbUser = properties.getProperty("db.user", DEFAULT_USER);
+		this.dbPassword = properties.getProperty("db.password", DEFAULT_PASS);
+		this.pagesDAO = new DBPagesDAO(dbUrl, dbUser, dbPassword);
 	}
 
 	public int getPort() {
-		return SERVICE_PORT;
+		return port;
 	}
 
 	public void start() {
@@ -46,8 +62,8 @@ public class HybridServer {
 
 			@Override
 			public void run() {
-				try (final ServerSocket serverSocket = new ServerSocket(SERVICE_PORT)) {
-					threadPool = Executors.newFixedThreadPool(maxClients);
+				try (final ServerSocket serverSocket = new ServerSocket(port)) {
+					threadPool = Executors.newFixedThreadPool(numClients);
 					while (true) {
 						Socket socket = serverSocket.accept();
 						if (stop)
@@ -59,7 +75,6 @@ public class HybridServer {
 				}
 			}
 		};
-
 		this.stop = false;
 		this.serverThread.start();
 	}
@@ -67,7 +82,7 @@ public class HybridServer {
 	public void stop() {
 		this.stop = true;
 
-		try (Socket socket = new Socket("localhost", SERVICE_PORT)) {
+		try (Socket socket = new Socket("localhost", getPort())) {
 			// Esta conexión se hace, simplemente, para "despertar" el hilo servidor
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -80,17 +95,15 @@ public class HybridServer {
 		}
 
 		this.serverThread = null;
-		
-		
+
 		threadPool.shutdownNow();
-		 
+
 		try {
-		  threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+			threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 		} catch (InterruptedException e) {
-		  e.printStackTrace();
+			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	private PagesDAO getPagesDAO() {

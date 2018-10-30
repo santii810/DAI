@@ -3,15 +3,10 @@ package es.uvigo.esei.dai.hybridserver.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.apache.derby.tools.sysinfo;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class HTTPRequest {
 

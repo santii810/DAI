@@ -1,14 +1,12 @@
 package es.uvigo.esei.dai.hybridserver.html;
 
-import java.io.OutputStream;
+import java.util.List;
 import java.util.UUID;
 
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
-import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
-import es.uvigo.esei.dai.hybridserver.model.dao.HTMLpagesDAO;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
 public class HtmlManager {
@@ -22,7 +20,7 @@ public class HtmlManager {
 		this.pagesDAO = pagesDAO;
 	}
 
-	public void response() {
+	public void sendResponse() {
 		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
 
 		switch (request.getMethod()) {
@@ -83,7 +81,8 @@ public class HtmlManager {
 				if (request.getResourceParameters().isEmpty()) {
 					// Muestro lista e paginas
 					response.setStatus(HTTPResponseStatus.S200);
-					response.setContent(this.buildHtml(pagesDAO.getHTMLPages()));
+
+					response.setContent(showPagesList(pagesDAO.getHTMLPages()));
 				} else if (request.getResourceParameters().containsKey("uuid")) {
 					String uuidRequested = request.getResourceParameters().get("uuid");
 					if (pagesDAO.containsUuid(uuidRequested)) {
@@ -105,6 +104,17 @@ public class HtmlManager {
 				response.setStatus(HTTPResponseStatus.S400);
 			}
 		}
+	}
+
+	private String showPagesList(List<String> list) {
+		StringBuilder htmlString = new StringBuilder("<ul>");
+		for (String page : list) {
+			htmlString.append("<li><a href=\"\">");
+			htmlString.append(page);
+			htmlString.append("</a></li>\r\n");
+		}
+		htmlString.append("</ul>\r\n");
+		return this.buildHtml(htmlString.toString());
 	}
 
 	private void welcomePage() {

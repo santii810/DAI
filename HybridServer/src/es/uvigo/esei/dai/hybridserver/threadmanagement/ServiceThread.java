@@ -10,7 +10,6 @@ import java.net.Socket;
 import es.uvigo.esei.dai.hybridserver.html.HtmlManager;
 import es.uvigo.esei.dai.hybridserver.http.HTTPParseException;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
-import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
@@ -29,29 +28,21 @@ public class ServiceThread implements Runnable {
 		try (Socket socket = this.socket) {
 			BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
 			String line;
-			
+
 			HTTPRequest request = new HTTPRequest(br);
 			HTTPResponse response = new HTTPResponse();
-			
+
 			HtmlManager manager = new HtmlManager(request, response, pagesDAO);
-			manager.response();
-			
+			try {
+				manager.sendResponse();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 			OutputStream outputStream = socket.getOutputStream();
 			response.print(new OutputStreamWriter(outputStream));
-			
-			
-//			while ((line = br.readLine()) != null && line.trim().isEmpty()) {
-//				System.out.println(line);
-//			}
-
-			
-			
-			
-			
-			
 
 		} catch (IOException | HTTPParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

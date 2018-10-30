@@ -1,25 +1,24 @@
 package es.uvigo.esei.dai.hybridserver.model.dao;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class HTMLpagesDAO implements PagesDAO {
+public class MapPagesDAO implements PagesDAO {
 
 	private Map<String, String> pages;
 
-	public HTMLpagesDAO(Map<String, String> pages) {
+	public MapPagesDAO(Map<String, String> pages) {
 		this.pages = pages;
 	}
 
 	@Override
-	public String getHTMLPages() {
-		StringBuilder toret = new StringBuilder("<ul>");
+	public List<String> getHTMLPages() {
+		List<String> toret = new ArrayList<>();
 		for (String page : pages.keySet()) {
-			toret.append("<li><a href=\"\">");
-			toret.append(page);
-			toret.append("</a></li>\r\n");
+			toret.add(page);
 		}
-		toret.append("</ul>\r\n");
-		return toret.toString();
+		return toret;
 	}
 
 	@Override
@@ -28,8 +27,8 @@ public class HTMLpagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public void addPage(String key, String value) {
-		this.pages.put(key, value);
+	public void addPage(String uuid, String content) {
+		this.pages.put(uuid, content);
 	}
 
 	public boolean containsUuid(String uuid) {
