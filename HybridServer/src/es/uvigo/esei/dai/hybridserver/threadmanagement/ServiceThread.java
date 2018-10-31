@@ -27,8 +27,9 @@ public class ServiceThread implements Runnable {
 	public void run() {
 		try (Socket socket = this.socket) {
 			BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
-			String line;
-			HTTPResponse response =  new HTTPResponse();
+
+			HTTPResponse response = new HTTPResponse();
+
 			try {
 				HTTPRequest request = new HTTPRequest(br);
 				HtmlManager manager = new HtmlManager(request, response, pagesDAO);
@@ -43,7 +44,6 @@ public class ServiceThread implements Runnable {
 				OutputStream outputStream = socket.getOutputStream();
 				response.print(new OutputStreamWriter(outputStream));
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
