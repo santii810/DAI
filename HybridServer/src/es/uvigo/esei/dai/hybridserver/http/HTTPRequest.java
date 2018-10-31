@@ -53,17 +53,19 @@ public class HTTPRequest {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("error " + e.getMessage());
-			throw new HTTPParseException("HTTP Method incorrect.");
+			throw new HTTPParseException("HTTP Method incorrect.", e);
 		}
 
 	}
 
 	private void readParamsFromResourceChain() {
-		String parametersString[] = resourceChain.split("\\?")[1].split("&");
-		for (String itParameters : parametersString) {
-			String[] parameters = itParameters.split("=");
-			resourceParameters.put(parameters[0], parameters[1]);
+		String parametersString[] = resourceChain.split("\\?");
+		if (parametersString.length > 1) {
+			parametersString = parametersString[1].split("&");
+			for (String itParameters : parametersString) {
+				String[] parameters = itParameters.split("=");
+					resourceParameters.put(parameters[0], parameters[1]);
+			}
 		}
 	}
 

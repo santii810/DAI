@@ -1,7 +1,16 @@
 package es.uvigo.esei.dai.hybridserver.html;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
+
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
+import org.apache.http.params.HttpParams;
 
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
@@ -22,19 +31,23 @@ public class HtmlManager {
 
 	public void sendResponse() {
 		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
-
-		switch (request.getMethod()) {
-		case GET:
-			manageGETRequest();
-			break;
-		case POST:
-			managePOSTRequest();
-			break;
-		case DELETE:
-			manageDELETERequest();
-			break;
-		default:
-			break;
+		try {
+			switch (request.getMethod()) {
+			case GET:
+				manageGETRequest();
+				break;
+			case POST:
+				managePOSTRequest();
+				break;
+			case DELETE:
+				manageDELETERequest();
+				break;
+			default:
+				break;
+			}
+		} catch (RuntimeException except) {
+			response.setStatus(HTTPResponseStatus.S500);
+			response.setContent(except.toString());
 		}
 
 	}
@@ -56,10 +69,6 @@ public class HtmlManager {
 	}
 
 	private void managePOSTRequest() {
-		System.out.println(!request.getResourceParameters().isEmpty());
-		System.out.println(request.getResourceName().equals("html"));
-		System.out.println(!request.getResourceParameters().isEmpty());
-
 		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals("html")
 				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("html")) {
 			UUID randomUuid = UUID.randomUUID();
@@ -88,7 +97,6 @@ public class HtmlManager {
 					if (pagesDAO.containsUuid(uuidRequested)) {
 						// uuid correcto
 						response.setStatus(HTTPResponseStatus.S200);
-//						response.setContent(buildHtml("<p>" + pagesDAO.getValue(uuidRequested) + "</p>"));
 						response.setContent(pagesDAO.getValue(uuidRequested));
 					} else {
 						// uuid no conocido
@@ -109,7 +117,7 @@ public class HtmlManager {
 	private String showPagesList(List<String> list) {
 		StringBuilder htmlString = new StringBuilder("<ul>");
 		for (String page : list) {
-			htmlString.append("<li><a href=\"\">");
+			htmlString.append("<li><a href=\"http://localhost:8888/html?uuid="+page    +"\">");
 			htmlString.append(page);
 			htmlString.append("</a></li>\r\n");
 		}
@@ -126,6 +134,11 @@ public class HtmlManager {
 
 	private String buildHtml(String content) {
 		return "<html><head><meta charset=\"utf-8\"></head><body>\r\n" + content + "</body></html>";
+	}
+
+	public static void responseBadRequest(HTTPResponse response) {
+		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
+		response.setStatus(HTTPResponseStatus.S400);
 	}
 
 }

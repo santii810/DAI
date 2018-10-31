@@ -49,7 +49,8 @@ public class DBPagesDAO implements PagesDAO {
 			try (PreparedStatement statement = connection.prepareStatement("SELECT content FROM HTML WHERE uuid = ?")) {
 				statement.setString(1, uuid);
 				ResultSet result = statement.executeQuery();
-				return result.getString(0);
+				result.next();
+				return result.getString("content");
 			} catch (SQLException queryException) {
 				System.out.println("Query error");
 				throw new RuntimeException(queryException);
@@ -85,11 +86,10 @@ public class DBPagesDAO implements PagesDAO {
 	public boolean containsUuid(String uuid) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection
-					.prepareStatement("SELECT count(uuid) AS count FROM HTML WHERE uuid = ?")) {
+					.prepareStatement("SELECT uuid AS count FROM HTML WHERE uuid = ?")) {
 				statement.setString(1, uuid);
 				ResultSet result = statement.executeQuery();
-				result.
-				return result.getInt(1) == 1;
+				return result.next();
 			} catch (SQLException queryException) {
 				System.out.println("Query error");
 				throw new RuntimeException(queryException);

@@ -28,23 +28,24 @@ public class ServiceThread implements Runnable {
 		try (Socket socket = this.socket) {
 			BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
 			String line;
-
-			HTTPRequest request = new HTTPRequest(br);
-			HTTPResponse response = new HTTPResponse();
-
-			HtmlManager manager = new HtmlManager(request, response, pagesDAO);
+			HTTPResponse response =  new HTTPResponse();
 			try {
-				manager.sendResponse();
-			} catch (Exception e) {
-				e.printStackTrace();
+				HTTPRequest request = new HTTPRequest(br);
+				HtmlManager manager = new HtmlManager(request, response, pagesDAO);
+				try {
+					manager.sendResponse();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} catch (HTTPParseException e) {
+				HtmlManager.responseBadRequest(response);
+			} finally {
+				OutputStream outputStream = socket.getOutputStream();
+				response.print(new OutputStreamWriter(outputStream));
 			}
 
-			OutputStream outputStream = socket.getOutputStream();
-			response.print(new OutputStreamWriter(outputStream));
-
-		} catch (IOException | HTTPParseException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
 }

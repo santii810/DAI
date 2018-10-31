@@ -19,6 +19,7 @@ public class HybridServer {
 	private static final String DEFAULT_USER = "hsdb";
 	private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/hstestdb";
 	private static final int DEFAULT_SERVICE_PORT = 8888;
+	private static final int DEFAULT_NUM_CLIENTS = 50;
 	private Thread serverThread;
 	private boolean stop;
 	private int numClients;
@@ -30,7 +31,7 @@ public class HybridServer {
 	private String dbPassword;
 
 	public HybridServer() {
-		this.numClients = 50;
+		this.numClients = DEFAULT_NUM_CLIENTS;
 		this.port = DEFAULT_SERVICE_PORT;
 		this.dbUrl = DEFAULT_URL;
 		this.dbUser = DEFAULT_USER;
@@ -39,14 +40,14 @@ public class HybridServer {
 	}
 
 	public HybridServer(Map<String, String> pages) {
-		this.numClients = 50;
+		this.numClients = DEFAULT_NUM_CLIENTS;
 		this.port = DEFAULT_SERVICE_PORT;
 		pagesDAO = new MapPagesDAO(pages);
 	}
 
 	public HybridServer(Properties properties) {
-		this.numClients = 50;
-		this.port = Integer.parseInt(properties.getProperty("port", "8888"));
+		this.numClients = Integer.parseInt(properties.getProperty("numClient", Integer.toString(DEFAULT_SERVICE_PORT)));
+		this.port = Integer.parseInt(properties.getProperty("port", Integer.toString(DEFAULT_SERVICE_PORT)));
 		this.dbUrl = properties.getProperty("db.url", DEFAULT_URL);
 		this.dbUser = properties.getProperty("db.user", DEFAULT_USER);
 		this.dbPassword = properties.getProperty("db.password", DEFAULT_PASS);
