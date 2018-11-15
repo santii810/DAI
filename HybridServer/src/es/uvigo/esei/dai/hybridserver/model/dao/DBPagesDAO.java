@@ -27,11 +27,11 @@ public class DBPagesDAO implements PagesDAO {
 		String query = "SELECT uuid FROM HTML";
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (Statement statement = connection.createStatement()) {
-				ResultSet result = statement.executeQuery(query);
-				while (result.next()) {
-					toret.add(result.getString("uuid"));
+				try (ResultSet result = statement.executeQuery(query)) {
+					while (result.next()) {
+						toret.add(result.getString("uuid"));
+					}
 				}
-
 			} catch (SQLException queryException) {
 				System.out.println("Query error");
 				throw new RuntimeException(queryException);
@@ -48,9 +48,10 @@ public class DBPagesDAO implements PagesDAO {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection.prepareStatement("SELECT content FROM HTML WHERE uuid = ?")) {
 				statement.setString(1, uuid);
-				ResultSet result = statement.executeQuery();
-				result.next();
-				return result.getString("content");
+				try (ResultSet result = statement.executeQuery()) {
+					result.next();
+					return result.getString("content");
+				}
 			} catch (SQLException queryException) {
 				System.out.println("Query error");
 				throw new RuntimeException(queryException);
@@ -88,8 +89,9 @@ public class DBPagesDAO implements PagesDAO {
 			try (PreparedStatement statement = connection
 					.prepareStatement("SELECT uuid AS count FROM HTML WHERE uuid = ?")) {
 				statement.setString(1, uuid);
-				ResultSet result = statement.executeQuery();
-				return result.next();
+				try (ResultSet result = statement.executeQuery()) {
+					return result.next();
+				}
 			} catch (SQLException queryException) {
 				System.out.println("Query error");
 				throw new RuntimeException(queryException);
