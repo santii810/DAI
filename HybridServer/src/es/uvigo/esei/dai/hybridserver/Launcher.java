@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class Launcher {
-	private static final String DEFAULT_PROPERTIES_FILENAME = "Properties.txt";
 
 	public static void main(String[] args) {
 

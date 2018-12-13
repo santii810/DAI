@@ -3,14 +3,12 @@ package es.uvigo.esei.dai.hybridserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import es.uvigo.esei.dai.hybridserver.model.dao.DBPagesDAO;
-import es.uvigo.esei.dai.hybridserver.model.dao.MapPagesDAO;
+import es.uvigo.esei.dai.hybridserver.model.dao.DBpagesDAO;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 import es.uvigo.esei.dai.hybridserver.threadmanagement.ServiceThread;
 
@@ -36,14 +34,10 @@ public class HybridServer {
 		this.dbUrl = DEFAULT_URL;
 		this.dbUser = DEFAULT_USER;
 		this.dbPassword = DEFAULT_PASS;
-		this.pagesDAO = new DBPagesDAO(dbUrl, dbUser, dbPassword);
+		this.pagesDAO = new DBpagesDAO(dbUrl, dbUser, dbPassword);
 	}
 
-	public HybridServer(Map<String, String> pages) {
-		this.numClients = DEFAULT_NUM_CLIENTS;
-		this.port = DEFAULT_SERVICE_PORT;
-		pagesDAO = new MapPagesDAO(pages);
-	}
+
 
 	public HybridServer(Properties properties) {
 		this.numClients = Integer.parseInt(properties.getProperty("numClient", Integer.toString(DEFAULT_SERVICE_PORT)));
@@ -51,7 +45,11 @@ public class HybridServer {
 		this.dbUrl = properties.getProperty("db.url", DEFAULT_URL);
 		this.dbUser = properties.getProperty("db.user", DEFAULT_USER);
 		this.dbPassword = properties.getProperty("db.password", DEFAULT_PASS);
-		this.pagesDAO = new DBPagesDAO(dbUrl, dbUser, dbPassword);
+		this.pagesDAO = new DBpagesDAO(dbUrl, dbUser, dbPassword);
+	}
+
+	public HybridServer(Configuration configuration) {
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getPort() {
@@ -104,10 +102,5 @@ public class HybridServer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-	}
-
-	private PagesDAO getPagesDAO() {
-		return pagesDAO;
 	}
 }

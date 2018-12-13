@@ -7,10 +7,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-import es.uvigo.esei.dai.hybridserver.html.HtmlManager;
 import es.uvigo.esei.dai.hybridserver.http.HTTPParseException;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
+import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
+import es.uvigo.esei.dai.hybridserver.manager.DELETERequestManager;
+import es.uvigo.esei.dai.hybridserver.manager.GETRequestManager;
+import es.uvigo.esei.dai.hybridserver.manager.POSTRequestManager;
+import es.uvigo.esei.dai.hybridserver.manager.RequestManager;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
 public class ServiceThread implements Runnable {
@@ -32,14 +36,34 @@ public class ServiceThread implements Runnable {
 
 			try {
 				HTTPRequest request = new HTTPRequest(br);
-				HtmlManager manager = new HtmlManager(request, response, pagesDAO);
+				RequestManager manager = null;
+
+				try {
+					switch (request.getMethod()) {
+					case GET:
+						manager = new GETRequestManager(request, response, pagesDAO);
+						break;
+					case POST:
+						manager = new POSTRequestManager(request, response, pagesDAO);
+						break;
+					case DELETE:
+						manager = new DELETERequestManager(request, response, pagesDAO);
+						break;
+					default:
+						break;
+					}
+				} catch (RuntimeException except) {
+					response.setStatus(HTTPResponseStatus.S500);
+					response.setContent(except.toString());
+				}
+
 				try {
 					manager.sendResponse();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} catch (HTTPParseException e) {
-				HtmlManager.responseBadRequest(response);
+				RequestManager.responseBadRequest(response);
 			} finally {
 				OutputStream outputStream = socket.getOutputStream();
 				response.print(new OutputStreamWriter(outputStream));

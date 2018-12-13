@@ -9,22 +9,22 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBPagesDAO implements PagesDAO {
+public class DBpagesDAO implements PagesDAO {
 
 	private String dbUrl;
 	private String dbUser;
 	private String dbPassword;
 
-	public DBPagesDAO(String dbUrl, String dbUser, String dbPassword) {
+	public DBpagesDAO(String dbUrl, String dbUser, String dbPassword) {
 		this.dbUrl = dbUrl;
 		this.dbUser = dbUser;
 		this.dbPassword = dbPassword;
 	}
 
 	@Override
-	public List<String> getHTMLPages() {
+	public List<String> getUuidFromTable(String dbTable) {
 		List<String> toret = new ArrayList<>();
-		String query = "SELECT uuid FROM HTML";
+		String query = "SELECT uuid FROM " + dbTable;
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (Statement statement = connection.createStatement()) {
 				try (ResultSet result = statement.executeQuery(query)) {
@@ -44,9 +44,10 @@ public class DBPagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public String getValue(String uuid) {
+	public String getValue(String uuid, String dbTable) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-			try (PreparedStatement statement = connection.prepareStatement("SELECT content FROM HTML WHERE uuid = ?")) {
+			try (PreparedStatement statement = connection
+					.prepareStatement("SELECT content FROM " + dbTable + " WHERE uuid = ?")) {
 				statement.setString(1, uuid);
 				try (ResultSet result = statement.executeQuery()) {
 					result.next();
@@ -84,10 +85,10 @@ public class DBPagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public boolean containsUuid(String uuid) {
+	public boolean containsUuid(String uuid, String dbTable) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection
-					.prepareStatement("SELECT uuid AS count FROM HTML WHERE uuid = ?")) {
+					.prepareStatement("SELECT uuid AS count FROM " + dbTable + " WHERE uuid = ?")) {
 				statement.setString(1, uuid);
 				try (ResultSet result = statement.executeQuery()) {
 					return result.next();
@@ -110,6 +111,30 @@ public class DBPagesDAO implements PagesDAO {
 				int result = statement.executeUpdate();
 				if (result != 1) {
 					throw new SQLException("Delete error");
+				}
+			} catch (SQLException queryException) {
+				System.out.println("Query error");
+				throw new RuntimeException(queryException);
+			}
+		} catch (SQLException connectionException) {
+			System.out.println("Connection error");
+			throw new RuntimeException(connectionException);
+		}
+
+	}
+
+	/*
+	 * return String array with content and xsd uuid values
+	 */
+	@Override
+	public String[] getXSLTParameters(String uuid) {
+		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+			try (PreparedStatement statement = connection
+					.prepareStatement("SELECT content, xsd FROM XSLT WHERE uuid = ?")) {
+				statement.setString(1, uuid);
+				try (ResultSet result = statement.executeQuery()) {
+					result.next();
+					return new String[] { result.getString("content"), result.getString("xsd") };
 				}
 			} catch (SQLException queryException) {
 				System.out.println("Query error");
