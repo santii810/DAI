@@ -20,38 +20,26 @@ package es.uvigo.esei.dai.hybridserver;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.uvigo.esei.dai.hybridserver.webService.ServerConfiguration;
+
 public class Configuration {
-	private int httpPort;
-	private int numClients;
-	private String webServiceURL;
-	
-	private String dbUser;
 	private String dbPassword;
 	private String dbURL;
-	
+	private String dbUser;
+
+	private int httpPort;
+	private int numClients;
 	private List<ServerConfiguration> servers;
-	
+
+	private String webServiceURL;
+
 	public Configuration() {
-		this(
-			8888,
-			50,
-			null,
-			"hsdb",
-			"hsdbpass",
-			"jdbc:mysql://localhost:3306/hstestdb",
-			new ArrayList<ServerConfiguration>()
-		);
+		this(8888, 50, null, "hsdb", "hsdbpass", "jdbc:mysql://localhost:3306/hstestdb",
+				new ArrayList<ServerConfiguration>());
 	}
-	
-	public Configuration(
-		int httpPort,
-		int numClients,
-		String webServiceURL,
-		String dbUser,
-		String dbPassword,
-		String dbURL,
-		List<ServerConfiguration> servers
-	) {
+
+	public Configuration(int httpPort, int numClients, String webServiceURL, String dbUser, String dbPassword,
+			String dbURL, List<ServerConfiguration> servers) {
 		this.httpPort = httpPort;
 		this.numClients = numClients;
 		this.webServiceURL = webServiceURL;
@@ -59,63 +47,61 @@ public class Configuration {
 		this.dbPassword = dbPassword;
 		this.dbURL = dbURL;
 		this.servers = servers;
-	}
-
-
-
-	public int getHttpPort() {
-		return httpPort;
-	}
-
-	public void setHttpPort(int httpPort) {
-		this.httpPort = httpPort;
-	}
-
-	public int getNumClients() {
-		return numClients;
-	}
-
-	public void setNumClients(int numClients) {
-		this.numClients = numClients;
-	}
-
-	public String getWebServiceURL() {
-		return webServiceURL;
-	}
-
-	public void setWebServiceURL(String webServiceURL) {
-		this.webServiceURL = webServiceURL;
-	}
-
-	public String getDbUser() {
-		return dbUser;
-	}
-
-	public void setDbUser(String dbUser) {
-		this.dbUser = dbUser;
 	}
 
 	public String getDbPassword() {
 		return dbPassword;
 	}
 
-	public void setDbPassword(String dbPassword) {
-		this.dbPassword = dbPassword;
-	}
-
 	public String getDbURL() {
 		return dbURL;
 	}
 
-	public void setDbURL(String dbURL) {
-		this.dbURL = dbURL;
+	public String getDbUser() {
+		return dbUser;
+	}
+
+	public int getHttpPort() {
+		return httpPort;
+	}
+
+	public int getNumClients() {
+		return numClients;
 	}
 
 	public List<ServerConfiguration> getServers() {
 		return servers;
 	}
 
+	public String getWebServiceURL() {
+		return webServiceURL;
+	}
+
+	public void setDbPassword(String dbPassword) {
+		this.dbPassword = dbPassword;
+	}
+
+	public void setDbURL(String dbURL) {
+		this.dbURL = dbURL;
+	}
+
+	public void setDbUser(String dbUser) {
+		this.dbUser = dbUser;
+	}
+
+	public void setHttpPort(int httpPort) {
+		this.httpPort = httpPort;
+	}
+
+	public void setNumClients(int numClients) {
+		this.numClients = numClients;
+	}
+
 	public void setServers(List<ServerConfiguration> servers) {
 		this.servers = servers;
+	}
+
+	public void setWebServiceURL(String webServiceURL) {
+		this.webServiceURL = webServiceURL;
 	}
 }

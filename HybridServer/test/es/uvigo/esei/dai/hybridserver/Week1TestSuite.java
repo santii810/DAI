@@ -25,10 +25,7 @@ import es.uvigo.esei.dai.hybridserver.week1.HTTPRequestResponseSuite;
 import es.uvigo.esei.dai.hybridserver.week1.WelcomePageTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	WelcomePageTest.class,
-	HTTPRequestResponseSuite.class
-})
+@SuiteClasses({ WelcomePageTest.class, HTTPRequestResponseSuite.class })
 public class Week1TestSuite {
 
 }

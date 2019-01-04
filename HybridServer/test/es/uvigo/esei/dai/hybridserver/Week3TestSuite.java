@@ -25,10 +25,7 @@ import es.uvigo.esei.dai.hybridserver.week3.ClientRequestsWithDatabaseTest;
 import es.uvigo.esei.dai.hybridserver.week3.CustomPortTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	CustomPortTest.class,
-	ClientRequestsWithDatabaseTest.class
-})
+@SuiteClasses({ CustomPortTest.class, ClientRequestsWithDatabaseTest.class })
 public class Week3TestSuite {
 
 }

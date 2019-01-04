@@ -35,8 +35,42 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 
 public final class TestUtils {
-	private TestUtils() {}
-	
+	/**
+	 * Realiza una petición por DELETE y devuelve el código de la respuesta HTTP.
+	 * 
+	 * La petición se hace en UTF-8 y solicitando el cierre de la conexión.
+	 * 
+	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
+	 * 
+	 * @param url
+	 *            URL de la página solicitada.
+	 * @return código de la respuesta HTTP.
+	 * @throws IOException
+	 *             en el caso de que se produzca un error de conexión.
+	 */
+	public static int deleteStatus(String url) throws IOException {
+		return Request.Delete(url).addHeader("Connection", "close").addHeader("Content-encoding", "UTF-8").execute()
+				.returnResponse().getStatusLine().getStatusCode();
+	}
+
+	/**
+	 * Extrae un UUID de un texto. En el caso de que existan varios UUID en el texto
+	 * se devolverá, únicamente, el primero de ellos.
+	 * 
+	 * @param text
+	 *            texto del cual se quiere extraer el UUID.
+	 * @return UUID encontrado en el texto o <code>null</code> en el caso de que no
+	 *         exista ninguno.
+	 */
+	public static String extractUUIDFromText(String text) {
+		final String patternString = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+
+		final Pattern pattern = Pattern.compile(patternString);
+		final Matcher matcher = pattern.matcher(text);
+
+		return matcher.find() ? matcher.group() : null;
+	}
+
 	/**
 	 * Realiza una petición por GET y devuelve el contenido de la respuesta.
 	 * 
@@ -44,22 +78,21 @@ public final class TestUtils {
 	 * 
 	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
 	 * 
-	 * @param url URL de la página solicitada.
+	 * @param url
+	 *            URL de la página solicitada.
 	 * @return contenido de la respuesta HTTP.
-	 * @throws IOException en el caso de que se produzca un error de conexión.
+	 * @throws IOException
+	 *             en el caso de que se produzca un error de conexión.
 	 */
 	public static String getContent(String url) throws IOException {
-		final HttpResponse response = Request.Get(url)
-			.addHeader("Connection", "close")
-			.addHeader("Content-encoding", "UTF-8")
-			.execute()
-		.returnResponse();
-		
+		final HttpResponse response = Request.Get(url).addHeader("Connection", "close")
+				.addHeader("Content-encoding", "UTF-8").execute().returnResponse();
+
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		
+
 		return EntityUtils.toString(response.getEntity());
 	}
-	
+
 	/**
 	 * Realiza una petición por GET y devuelve el contenido de la respuesta.
 	 * 
@@ -67,24 +100,22 @@ public final class TestUtils {
 	 * 
 	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
 	 * 
-	 * @param url URL de la página solicitada.
+	 * @param url
+	 *            URL de la página solicitada.
 	 * @return contenido de la respuesta HTTP.
-	 * @throws IOException en el caso de que se produzca un error de conexión.
+	 * @throws IOException
+	 *             en el caso de que se produzca un error de conexión.
 	 */
-	public static String getContentWithType(String url, String contentType)
-	throws IOException {
-		final HttpResponse response = Request.Get(url)
-			.addHeader("Connection", "close")
-			.addHeader("Content-encoding", "UTF-8")
-			.execute()
-		.returnResponse();
-		
+	public static String getContentWithType(String url, String contentType) throws IOException {
+		final HttpResponse response = Request.Get(url).addHeader("Connection", "close")
+				.addHeader("Content-encoding", "UTF-8").execute().returnResponse();
+
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals(contentType, response.getEntity().getContentType().getValue());
-		
+
 		return EntityUtils.toString(response.getEntity());
 	}
-	
+
 	/**
 	 * Realiza una petición por GET y devuelve el código de la respuesta HTTP.
 	 * 
@@ -92,18 +123,25 @@ public final class TestUtils {
 	 * 
 	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
 	 * 
-	 * @param url URL de la página solicitada.
+	 * @param url
+	 *            URL de la página solicitada.
 	 * @return código de la respuesta HTTP.
-	 * @throws IOException en el caso de que se produzca un error de conexión.
+	 * @throws IOException
+	 *             en el caso de que se produzca un error de conexión.
 	 */
 	public static int getStatus(String url) throws IOException {
-		return Request.Get(url)
-			.addHeader("Connection", "close")
-			.addHeader("Content-encoding", "UTF-8")
-			.execute()
-			.returnResponse()
-			.getStatusLine()
-		.getStatusCode();
+		return Request.Get(url).addHeader("Connection", "close").addHeader("Content-encoding", "UTF-8").execute()
+				.returnResponse().getStatusLine().getStatusCode();
+	}
+
+	private static List<NameValuePair> mapToNameValuePair(Map<String, String> map) {
+		final Form form = Form.form();
+
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			form.add(entry.getKey(), entry.getValue());
+		}
+
+		return form.build();
 	}
 
 	/**
@@ -113,22 +151,21 @@ public final class TestUtils {
 	 * 
 	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
 	 * 
-	 * @param url URL de la página solicitada.
-	 * @param content parámetros que se incluirán en la petición HTTP.
+	 * @param url
+	 *            URL de la página solicitada.
+	 * @param content
+	 *            parámetros que se incluirán en la petición HTTP.
 	 * @return contenido de la respuesta HTTP.
-	 * @throws IOException en el caso de que se produzca un error de conexión.
+	 * @throws IOException
+	 *             en el caso de que se produzca un error de conexión.
 	 */
-	public static String postContent(String url, Map<String, String> content)
-	throws IOException {
-		final HttpResponse response = Request.Post(url)
-			.addHeader("Connection", "close")
-			.addHeader("Content-encoding", "UTF-8")
-			.bodyForm(mapToNameValuePair(content))
-			.execute()
-		.returnResponse();
-		
+	public static String postContent(String url, Map<String, String> content) throws IOException {
+		final HttpResponse response = Request.Post(url).addHeader("Connection", "close")
+				.addHeader("Content-encoding", "UTF-8").bodyForm(mapToNameValuePair(content)).execute()
+				.returnResponse();
+
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		
+
 		return EntityUtils.toString(response.getEntity());
 	}
 
@@ -139,91 +176,43 @@ public final class TestUtils {
 	 * 
 	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
 	 * 
-	 * @param url URL de la página solicitada.
-	 * @param content parámetros que se incluirán en la petición HTTP.
+	 * @param url
+	 *            URL de la página solicitada.
+	 * @param content
+	 *            parámetros que se incluirán en la petición HTTP.
 	 * @return código de la respuesta HTTP.
-	 * @throws IOException en el caso de que se produzca un error de conexión.
+	 * @throws IOException
+	 *             en el caso de que se produzca un error de conexión.
 	 */
-	public static int postStatus(String url, Map<String, String> content)
-	throws IOException {
-		return Request.Post(url)
-			.addHeader("Connection", "close")
-			.addHeader("Content-encoding", "UTF-8")
-			.bodyForm(mapToNameValuePair(content))
-			.execute()
-			.returnResponse()
-			.getStatusLine()
-		.getStatusCode();
+	public static int postStatus(String url, Map<String, String> content) throws IOException {
+		return Request.Post(url).addHeader("Connection", "close").addHeader("Content-encoding", "UTF-8")
+				.bodyForm(mapToNameValuePair(content)).execute().returnResponse().getStatusLine().getStatusCode();
 	}
-	
+
 	/**
-	 * Realiza una petición por DELETE y devuelve el código de la respuesta HTTP.
+	 * Lee por completo un InputStream y devuelve su contenido en forma de cadena de
+	 * texto.
 	 * 
-	 * La petición se hace en UTF-8 y solicitando el cierre de la conexión.
-	 * 
-	 * Este método comprueba que el código de respuesta HTTP sea 200 OK.
-	 * 
-	 * @param url URL de la página solicitada.
-	 * @return código de la respuesta HTTP.
-	 * @throws IOException en el caso de que se produzca un error de conexión.
-	 */
-	public static int deleteStatus(String url) throws IOException {
-		return Request.Delete(url)
-			.addHeader("Connection", "close")
-			.addHeader("Content-encoding", "UTF-8")
-			.execute()
-			.returnResponse()
-			.getStatusLine()
-		.getStatusCode();
-	}
-	
-	/**
-	 * Extrae un UUID de un texto. En el caso de que existan varios UUID en el
-	 * texto se devolverá, únicamente, el primero de ellos.
-	 * 
-	 * @param text texto del cual se quiere extraer el UUID.
-	 * @return UUID encontrado en el texto o <code>null</code> en el caso de 
-	 * que no exista ninguno.
-	 */
-	public static String extractUUIDFromText(String text) {
-		final String patternString = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-		
-		final Pattern pattern = Pattern.compile(patternString);
-		final Matcher matcher = pattern.matcher(text);
-		
-		return matcher.find() ? matcher.group() : null;
-	}
-	
-	/**
-	 * Lee por completo un InputStream y devuelve su contenido en forma de 
-	 * cadena de texto.
-	 * 
-	 * @param is flujo de entrada del que se va a leer.
+	 * @param is
+	 *            flujo de entrada del que se va a leer.
 	 * @return contenido del flujo de entrada.
 	 */
 	public static String readToString(InputStream is) {
 		try (final Reader reader = new InputStreamReader(is)) {
 			final char[] buffer = new char[4096];
 			final StringBuilder sb = new StringBuilder();
-			
+
 			int read;
 			while ((read = reader.read(buffer, 0, buffer.length)) != -1) {
 				sb.append(buffer, 0, read);
 			}
-			
+
 			return sb.toString();
 		} catch (IOException ioe) {
 			throw new RuntimeException(ioe);
 		}
 	}
-	
-	private static List<NameValuePair> mapToNameValuePair(Map<String, String> map) {
-		final Form form = Form.form();
-		
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			form.add(entry.getKey(), entry.getValue());
-		}
-		
-		return form.build();
+
+	private TestUtils() {
 	}
 }

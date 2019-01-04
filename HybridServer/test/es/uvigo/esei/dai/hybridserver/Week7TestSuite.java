@@ -27,12 +27,8 @@ import es.uvigo.esei.dai.hybridserver.week7.XSDClientRequestsWithDatabaseTest;
 import es.uvigo.esei.dai.hybridserver.week7.XSLTClientRequestsWithDatabaseTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	HTMLClientRequestsWithDatabaseTest.class,
-	XMLClientRequestsWithDatabaseTest.class,
-	XSDClientRequestsWithDatabaseTest.class,
-	XSLTClientRequestsWithDatabaseTest.class
-})
+@SuiteClasses({ HTMLClientRequestsWithDatabaseTest.class, XMLClientRequestsWithDatabaseTest.class,
+		XSDClientRequestsWithDatabaseTest.class, XSLTClientRequestsWithDatabaseTest.class })
 public class Week7TestSuite {
 
 }

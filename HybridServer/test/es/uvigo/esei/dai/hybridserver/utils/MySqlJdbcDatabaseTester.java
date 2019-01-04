@@ -34,20 +34,17 @@ public class MySqlJdbcDatabaseTester extends JdbcDatabaseTester {
 		super(MYSQL_DRIVER, connectionUrl, username, password);
 	}
 
-	public MySqlJdbcDatabaseTester(String connectionUrl, String username, String password,
-			String schema) throws ClassNotFoundException {
+	public MySqlJdbcDatabaseTester(String connectionUrl, String username, String password, String schema)
+			throws ClassNotFoundException {
 		super(MYSQL_DRIVER, connectionUrl, username, password, schema);
 	}
 
 	@Override
 	public IDatabaseConnection getConnection() throws Exception {
 		final IDatabaseConnection connection = super.getConnection();
-		
-		connection.getConfig().setProperty(
-			DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-			new MySqlDataTypeFactory()
-		);
-		
+
+		connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+
 		return connection;
 	}
 }

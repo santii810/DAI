@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import es.uvigo.esei.dai.hybridserver.webService.ServerConfiguration;
 import es.uvigo.esei.dai.hybridserver.xml.XMLValidator;
 
 public class XMLConfigurationLoader {
@@ -43,7 +44,7 @@ public class XMLConfigurationLoader {
 
 		// Parseado de connections
 		NodeList connections = document.getElementsByTagName("connections");
-		Element connectionElement = (Element) connections.item(0);	
+		Element connectionElement = (Element) connections.item(0);
 		Node HTTP = connectionElement.getElementsByTagName("http").item(0);
 		config.setHttpPort(Integer.parseInt(HTTP.getTextContent()));
 		Node webservice = connectionElement.getElementsByTagName("webservice").item(0);

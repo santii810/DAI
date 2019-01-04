@@ -17,11 +17,11 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
 
 public class HTTPResponseNoContentWithHeadersTest {
 	private HTTPResponse response;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		this.response = new HTTPResponse();
-		
+
 		this.response.setStatus(HTTPResponseStatus.S200);
 		this.response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
 		this.response.putParameter("Content-Type", "text/html");
@@ -33,7 +33,7 @@ public class HTTPResponseNoContentWithHeadersTest {
 	public final void testPrint() throws IOException {
 		try (final StringWriter writer = new StringWriter()) {
 			this.response.print(writer);
-			
+
 			final String responseText = writer.toString();
 			assertThat(responseText, startsWith("HTTP/1.1 200 OK"));
 			assertThat(responseText, containsString("Content-Type: text/html"));

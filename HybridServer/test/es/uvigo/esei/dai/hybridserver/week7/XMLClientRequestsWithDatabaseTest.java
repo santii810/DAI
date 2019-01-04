@@ -23,23 +23,10 @@ import org.junit.Before;
 
 import es.uvigo.esei.dai.hybridserver.http.MIME;
 
-public class XMLClientRequestsWithDatabaseTest
-extends AbstractClientRequestWithDatabaseTest {
-	@Before
-	public void initAttributes() {
-		this.invalidUUID = "12345678-abcd-1234-ab12-9876543210ab";
-		
-		// Estas páginas se insertan en la base de datos al inicio del test.
-		this.pages = new String[][] {
-		//  { "uuid",                                 "texto contenido por la página" }
-			{ "ddcab7d0-636c-11e4-8db3-685b35c84fb4", readToString(getClass().getResourceAsStream("sample1.xml")) },
-			{ "ea118888-6908-11e4-9620-685b35c84fb4", readToString(getClass().getResourceAsStream("sample2.xml")) },
-		};
-	}
-
+public class XMLClientRequestsWithDatabaseTest extends AbstractClientRequestWithDatabaseTest {
 	@Override
-	protected String getTableName() {
-		return "XML";
+	protected String getContentType() {
+		return MIME.APPLICATION_XML.getMime();
 	}
 
 	@Override
@@ -48,7 +35,19 @@ extends AbstractClientRequestWithDatabaseTest {
 	}
 
 	@Override
-	protected String getContentType() {
-		return MIME.APPLICATION_XML.getMime();
+	protected String getTableName() {
+		return "XML";
+	}
+
+	@Before
+	public void initAttributes() {
+		this.invalidUUID = "12345678-abcd-1234-ab12-9876543210ab";
+
+		// Estas páginas se insertan en la base de datos al inicio del test.
+		this.pages = new String[][] {
+				// { "uuid", "texto contenido por la página" }
+				{ "ddcab7d0-636c-11e4-8db3-685b35c84fb4", readToString(getClass().getResourceAsStream("sample1.xml")) },
+				{ "ea118888-6908-11e4-9620-685b35c84fb4",
+						readToString(getClass().getResourceAsStream("sample2.xml")) }, };
 	}
 }

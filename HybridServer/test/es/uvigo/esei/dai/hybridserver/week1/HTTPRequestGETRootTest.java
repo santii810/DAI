@@ -20,17 +20,35 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 
 public class HTTPRequestGETRootTest {
-	private String requestText;
 	private HTTPRequest request;
-	
+	private String requestText;
+
 	@Before
 	public void setUp() throws Exception {
-		this.requestText = "GET / HTTP/1.1\r\n" +
-			"Host: localhost\r\n";
-		
-		this.request = new HTTPRequest(new StringReader(
-			this.requestText + "\r\n"
-		));
+		this.requestText = "GET / HTTP/1.1\r\n" + "Host: localhost\r\n";
+
+		this.request = new HTTPRequest(new StringReader(this.requestText + "\r\n"));
+	}
+
+	@Test
+	public final void testGetContent() {
+		assertThat(request.getContent(), is(nullValue()));
+	}
+
+	@Test
+	public final void testGetContentLength() {
+		assertThat(request.getContentLength(), is(equalTo(0)));
+	}
+
+	@Test
+	public final void testGetHeaderParameters() {
+		assertThat(request.getHeaderParameters(), hasEntry("Host", "localhost"));
+		assertThat(request.getHeaderParameters(), is(aMapWithSize(1)));
+	}
+
+	@Test
+	public final void testGetHttpVersion() {
+		assertThat(request.getHttpVersion(), is(equalTo(HTTPHeaders.HTTP_1_1.getHeader())));
 	}
 
 	@Test
@@ -44,18 +62,8 @@ public class HTTPRequestGETRootTest {
 	}
 
 	@Test
-	public final void testGetResourcePath() {
-		assertThat(request.getResourcePath(), is(emptyArray()));
-	}
-
-	@Test
 	public final void testGetResourceName() {
 		assertThat(request.getResourceName(), is(emptyString()));
-	}
-
-	@Test
-	public final void testGetHttpVersion() {
-		assertThat(request.getHttpVersion(), is(equalTo(HTTPHeaders.HTTP_1_1.getHeader())));
 	}
 
 	@Test
@@ -64,19 +72,8 @@ public class HTTPRequestGETRootTest {
 	}
 
 	@Test
-	public final void testGetHeaderParameters() {
-		assertThat(request.getHeaderParameters(), hasEntry("Host", "localhost"));
-		assertThat(request.getHeaderParameters(), is(aMapWithSize(1)));
-	}
-
-	@Test
-	public final void testGetContent() {
-		assertThat(request.getContent(), is(nullValue()));
-	}
-
-	@Test
-	public final void testGetContentLength() {
-		assertThat(request.getContentLength(), is(equalTo(0)));
+	public final void testGetResourcePath() {
+		assertThat(request.getResourcePath(), is(emptyArray()));
 	}
 
 	@Test

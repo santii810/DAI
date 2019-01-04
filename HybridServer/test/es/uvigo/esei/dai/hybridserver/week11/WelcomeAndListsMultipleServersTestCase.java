@@ -28,14 +28,26 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class WelcomeAndListsMultipleServersTestCase
-extends MultipleServersTestCase {
+public class WelcomeAndListsMultipleServersTestCase extends MultipleServersTestCase {
 	private final int serverIndex;
-	
-	public WelcomeAndListsMultipleServersTestCase(
-		String serverName, int serverIndex
-	) {
+
+	public WelcomeAndListsMultipleServersTestCase(String serverName, int serverIndex) {
 		this.serverIndex = serverIndex;
+	}
+
+	@Test
+	public final void testHtmlList() throws IOException {
+		testList("html", getAllHtmlUUIDs());
+	}
+
+	protected void testList(final String resource, final String[] uuids) throws IOException {
+		final String url = serversHTTPURL[serverIndex] + resource;
+
+		final String content = getContent(url);
+
+		for (String uuid : uuids) {
+			assertThat(content, containsString(uuid));
+		}
 	}
 
 	@Test
@@ -46,33 +58,17 @@ extends MultipleServersTestCase {
 	}
 
 	@Test
-	public final void testHtmlList() throws IOException {
-		testList("html", getAllHtmlUUIDs());
-	}
-	
-	@Test
 	public final void testXmlList() throws IOException {
 		testList("xml", getAllXmlUUIDs());
 	}
-	
+
 	@Test
 	public final void testXsdList() throws IOException {
 		testList("xsd", getAllXsdUUIDs());
 	}
-	
+
 	@Test
 	public final void testXsltList() throws IOException {
 		testList("xslt", getAllXsltUUIDs());
-	}
-
-	protected void testList(final String resource, final String[] uuids)
-	throws IOException {
-		final String url = serversHTTPURL[serverIndex] + resource;
-		
-		final String content = getContent(url);
-		
-		for (String uuid : uuids) {
-			assertThat(content, containsString(uuid));
-		}
 	}
 }

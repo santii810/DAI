@@ -27,20 +27,48 @@ import org.junit.After;
 import org.junit.Before;
 
 public abstract class JdbcTestCase {
-	private IDatabaseTester tester;
 	private IDatabaseConnection connection;
-	
+	private IDatabaseTester tester;
+
+	protected IDatabaseTester createDatabaseTester() throws ClassNotFoundException {
+		return new MySqlJdbcDatabaseTester(getConnectionUrl(), getUsername(), getPassword());
+	}
+
+	protected Connection getConnection() throws Exception {
+		return this.connection.getConnection();
+	}
+
+	protected String getConnectionUrl() {
+		// Esta base de datos debe existir con las tablas creadas
+		// y el usuario debe tener acceso.
+		return "jdbc:mysql://localhost/hstestdb";
+	}
+
+	protected IDataSet getDataSet() throws Exception {
+		return new FlatXmlDataSetBuilder().setMetaDataSetFromDtd(getClass().getResourceAsStream("dataset.dtd"))
+				.setCaseSensitiveTableNames(false).setColumnSensing(true)
+				.build(getClass().getResourceAsStream("dataset.xml"));
+	}
+
+	protected String getPassword() {
+		return "hsdbpass";
+	}
+
+	protected String getUsername() {
+		return "hsdb";
+	}
+
 	@Before
 	public void setUpJdbc() throws Exception {
 		this.tester = this.createDatabaseTester();
-		
+
 		this.connection = this.tester.getConnection();
 
 		this.tester.setDataSet(getDataSet());
-		
+
 		this.tester.onSetup();
 	}
-	
+
 	@After
 	public void tearDownJdbc() throws Exception {
 		try {
@@ -49,36 +77,5 @@ public abstract class JdbcTestCase {
 		} finally {
 			this.connection = null;
 		}
-	}
-
-	protected IDatabaseTester createDatabaseTester()
-	throws ClassNotFoundException {
-		return new MySqlJdbcDatabaseTester(getConnectionUrl(), getUsername(), getPassword());
-	}
-	
-	protected String getConnectionUrl() {
-		// Esta base de datos debe existir con las tablas creadas 
-		// y el usuario debe tener acceso.
-		return "jdbc:mysql://localhost/hstestdb";
-	}
-	
-	protected String getUsername() {
-		return "hsdb";
-	}
-	
-	protected String getPassword() {
-		return "hsdbpass";
-	}
-
-	protected IDataSet getDataSet() throws Exception {
-		return new FlatXmlDataSetBuilder()
-			.setMetaDataSetFromDtd(getClass().getResourceAsStream("dataset.dtd"))
-			.setCaseSensitiveTableNames(false)
-			.setColumnSensing(true)
-		.build(getClass().getResourceAsStream("dataset.xml"));
-	}
-	
-	protected Connection getConnection() throws Exception {
-		return this.connection.getConnection();
 	}
 }

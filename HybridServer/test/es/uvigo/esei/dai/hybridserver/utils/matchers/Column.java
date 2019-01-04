@@ -18,34 +18,34 @@
 package es.uvigo.esei.dai.hybridserver.utils.matchers;
 
 public class Column {
-	private final Table table;
 	private final String name;
+	private final Table table;
 	private String value;
-	
+
 	Column(Table table, String name) {
 		this.table = table;
 		this.name = name;
 	}
-	
-	public TableHas withValue(String value) {
-		this.value = value;
-		this.table.addColumn(this);
-		
-		return new TableHas(table);
-	}
-	
-	public TableHasNot withoutValue(String value) {
-		this.value = value;
-		this.table.addColumn(this);
-		
-		return new TableHasNot(table);
-	}
-	
+
 	String getName() {
 		return name;
 	}
-	
+
 	String getValue() {
 		return value;
+	}
+
+	public TableHasNot withoutValue(String value) {
+		this.value = value;
+		this.table.addColumn(this);
+
+		return new TableHasNot(table);
+	}
+
+	public TableHas withValue(String value) {
+		this.value = value;
+		this.table.addColumn(this);
+
+		return new TableHas(table);
 	}
 }

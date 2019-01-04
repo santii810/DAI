@@ -46,8 +46,10 @@ public class XMLValidator {
 	}
 
 	/**
-	 * @param xml XML to be validated
-	 * @param xsd XSL to validate
+	 * @param xml
+	 *            XML to be validated
+	 * @param xsd
+	 *            XSL to validate
 	 * @throws SAXException
 	 * @throws IOException
 	 * @throws ParserConfigurationException

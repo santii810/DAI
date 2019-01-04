@@ -38,52 +38,44 @@ import org.junit.rules.Timeout;
 
 import es.uvigo.esei.dai.hybridserver.Configuration;
 import es.uvigo.esei.dai.hybridserver.HybridServer;
-import es.uvigo.esei.dai.hybridserver.ServerConfiguration;
 import es.uvigo.esei.dai.hybridserver.http.MIME;
 import es.uvigo.esei.dai.hybridserver.utils.JdbcTestCase;
+import es.uvigo.esei.dai.hybridserver.webService.ServerConfiguration;
 
-public class ConvertedXMLTest 
-extends JdbcTestCase {
-	@Rule public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
-	
-	protected HybridServer server;
-	protected String url;
+public class ConvertedXMLTest extends JdbcTestCase {
+	@Rule
+	public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
+
 	protected String invalidXSLT;
 	protected String[][] pages;
-	
+	protected HybridServer server;
+	protected String url;
+
 	@Before
 	public void startServer() throws Exception {
-		final Configuration configuration = new Configuration(
-			8888, 50, null,
-			getUsername(), getPassword(), getConnectionUrl(),
-			new ArrayList<ServerConfiguration>()
-		);
+		final Configuration configuration = new Configuration(8888, 50, null, getUsername(), getPassword(),
+				getConnectionUrl(), new ArrayList<ServerConfiguration>());
 		this.server = new HybridServer(configuration);
 		this.url = String.format("http://localhost:%d/", this.server.getPort());
 		this.invalidXSLT = "12345678-abcd-1234-ab12-9876543210ab";
-		
+
 		// Estas páginas se insertan en la base de datos al inicio del test.
 		this.pages = new String[][] {
-		//  { "uuid",
-		//    "xslt",
-		//    "xslt with non valid xsd",
-		//    "texto xml",
-		//    "texto xml convertido",
-		//	}
-			{ "ddcab7d0-636c-11e4-8db3-685b35c84fb4", 
-			  "f260dfee-636c-11e4-bbdd-685b35c84fb4",
-			  "1fd26c94-6909-11e4-9a75-685b35c84fb4",
-			  readToString(getClass().getResourceAsStream("sample1.xml")), 
-			  readToString(getClass().getResourceAsStream("sample1.html")) 
-			 },
-			{ "ea118888-6908-11e4-9620-685b35c84fb4",
-			  "1fd26c94-6909-11e4-9a75-685b35c84fb4",
-			  "f260dfee-636c-11e4-bbdd-685b35c84fb4",
-			  readToString(getClass().getResourceAsStream("sample2.xml")), 
-			  readToString(getClass().getResourceAsStream("sample2.html")) 
-			},
-		};
-		
+				// { "uuid",
+				// "xslt",
+				// "xslt with non valid xsd",
+				// "texto xml",
+				// "texto xml convertido",
+				// }
+				{ "ddcab7d0-636c-11e4-8db3-685b35c84fb4", "f260dfee-636c-11e4-bbdd-685b35c84fb4",
+						"1fd26c94-6909-11e4-9a75-685b35c84fb4",
+						readToString(getClass().getResourceAsStream("sample1.xml")),
+						readToString(getClass().getResourceAsStream("sample1.html")) },
+				{ "ea118888-6908-11e4-9620-685b35c84fb4", "1fd26c94-6909-11e4-9a75-685b35c84fb4",
+						"f260dfee-636c-11e4-bbdd-685b35c84fb4",
+						readToString(getClass().getResourceAsStream("sample2.xml")),
+						readToString(getClass().getResourceAsStream("sample2.html")) }, };
+
 		this.server.start();
 	}
 
@@ -93,38 +85,24 @@ extends JdbcTestCase {
 	}
 
 	@Test
-	public void testSimpleGet() throws IOException {
-		final String pageURL = url + "/xml";
-		
-		for (String[] page : pages) {
-			final String uuid = page[0];
-			final String uuidPageURL = pageURL + "?uuid=" + uuid;
-			
-			final String content = getContentWithType(uuidPageURL, MIME.APPLICATION_XML.getMime());
-	
-			assertThat(content, is(equalsToIgnoringSpaces(page[3])));
-		}
-	}
-
-	@Test
 	public void testConvertedGet() throws IOException {
 		final String pageURL = url + "/xml";
-		
+
 		for (String[] page : pages) {
 			final String uuid = page[0];
 			final String xslt = page[1];
 			final String uuidPageURL = pageURL + "?uuid=" + uuid + "&xslt=" + xslt;
-			
+
 			final String content = getContentWithType(uuidPageURL, MIME.TEXT_HTML.getMime());
 
 			assertThat(content, is(equalsToIgnoringSpaces(page[4])));
 		}
 	}
-	
+
 	@Test
 	public void testInexistantXSLT() throws IOException {
 		final String pageURL = url + "/xml";
-		
+
 		for (String[] page : pages) {
 			final String uuid = page[0];
 			final String uuidPageURL = pageURL + "?uuid=" + uuid + "&xslt=" + invalidXSLT;
@@ -132,17 +110,31 @@ extends JdbcTestCase {
 			assertThat(getStatus(uuidPageURL), is(equalTo(404)));
 		}
 	}
-	
+
 	@Test
 	public void testInvalidXSLT() throws IOException {
 		final String pageURL = url + "/xml";
-		
+
 		for (String[] page : pages) {
 			final String uuid = page[0];
 			final String xslt = page[2]; // El XML no es válido para el XSD
 			final String uuidPageURL = pageURL + "?uuid=" + uuid + "&xslt=" + xslt;
 
 			assertThat(getStatus(uuidPageURL), is(equalTo(400)));
+		}
+	}
+
+	@Test
+	public void testSimpleGet() throws IOException {
+		final String pageURL = url + "/xml";
+
+		for (String[] page : pages) {
+			final String uuid = page[0];
+			final String uuidPageURL = pageURL + "?uuid=" + uuid;
+
+			final String content = getContentWithType(uuidPageURL, MIME.APPLICATION_XML.getMime());
+
+			assertThat(content, is(equalsToIgnoringSpaces(page[3])));
 		}
 	}
 }

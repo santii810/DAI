@@ -20,19 +20,37 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 
 public class HTTPRequestGETResourcesTest {
-	private String requestText;
 	private HTTPRequest request;
-	
+	private String requestText;
+
 	@Before
 	public void setUp() throws Exception {
-		this.requestText = "GET /hello/world.html HTTP/1.1\r\n" +
-			"Host: localhost\r\n" +
-			"Accept: text/html\r\n" +
-			"Accept-Encoding: gzip,deflate\r\n";
-		
-		this.request = new HTTPRequest(new StringReader(
-			this.requestText + "\r\n"
-		));
+		this.requestText = "GET /hello/world.html HTTP/1.1\r\n" + "Host: localhost\r\n" + "Accept: text/html\r\n"
+				+ "Accept-Encoding: gzip,deflate\r\n";
+
+		this.request = new HTTPRequest(new StringReader(this.requestText + "\r\n"));
+	}
+
+	@Test
+	public final void testGetContent() {
+		assertThat(request.getContent(), is(nullValue()));
+	}
+
+	@Test
+	public final void testGetContentLength() {
+		assertThat(request.getContentLength(), is(equalTo(0)));
+	}
+
+	@Test
+	public final void testGetHeaderParameters() {
+		assertThat(request.getHeaderParameters(), allOf(hasEntry("Host", "localhost"), hasEntry("Accept", "text/html"),
+				hasEntry("Accept-Encoding", "gzip,deflate")));
+		assertThat(request.getHeaderParameters(), is(aMapWithSize(3)));
+	}
+
+	@Test
+	public final void testGetHttpVersion() {
+		assertThat(request.getHttpVersion(), is(equalTo(HTTPHeaders.HTTP_1_1.getHeader())));
 	}
 
 	@Test
@@ -46,18 +64,8 @@ public class HTTPRequestGETResourcesTest {
 	}
 
 	@Test
-	public final void testGetResourcePath() {
-		assertThat(request.getResourcePath(), is(arrayContaining("hello", "world.html")));
-	}
-
-	@Test
 	public final void testGetResourceName() {
 		assertThat(request.getResourceName(), is(equalTo("hello/world.html")));
-	}
-
-	@Test
-	public final void testGetHttpVersion() {
-		assertThat(request.getHttpVersion(), is(equalTo(HTTPHeaders.HTTP_1_1.getHeader())));
 	}
 
 	@Test
@@ -66,23 +74,8 @@ public class HTTPRequestGETResourcesTest {
 	}
 
 	@Test
-	public final void testGetHeaderParameters() {
-		assertThat(request.getHeaderParameters(), allOf(
-			hasEntry("Host", "localhost"),
-			hasEntry("Accept", "text/html"),
-			hasEntry("Accept-Encoding", "gzip,deflate")
-		));
-		assertThat(request.getHeaderParameters(), is(aMapWithSize(3)));
-	}
-
-	@Test
-	public final void testGetContent() {
-		assertThat(request.getContent(), is(nullValue()));
-	}
-
-	@Test
-	public final void testGetContentLength() {
-		assertThat(request.getContentLength(), is(equalTo(0)));
+	public final void testGetResourcePath() {
+		assertThat(request.getResourcePath(), is(arrayContaining("hello", "world.html")));
 	}
 
 	@Test

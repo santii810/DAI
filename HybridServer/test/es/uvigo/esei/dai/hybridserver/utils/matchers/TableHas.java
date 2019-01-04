@@ -23,23 +23,27 @@ import java.util.List;
 
 import org.hamcrest.Description;
 
-
 public class TableHas extends TableMatcher {
 	TableHas(Table table) {
 		super(table);
 	}
 
 	@Override
+	protected boolean checkResults(ResultSet results) throws SQLException {
+		return results.next();
+	}
+
+	@Override
 	public void describeTo(Description description) {
 		description.appendText("No row matching query: " + this.toSQL());
 	}
-	
+
 	@Override
 	protected String toSQL() {
 		final StringBuilder sb = new StringBuilder();
-		
+
 		sb.append("SELECT * FROM ").append(table.getName());
-		
+
 		final List<Column> columns = table.getColumns();
 		if (!columns.isEmpty()) {
 			sb.append(" WHERE 1=1");
@@ -47,12 +51,7 @@ public class TableHas extends TableMatcher {
 				sb.append(" AND ").append(column.getName()).append(" = \"").append(column.getValue()).append('"');
 			}
 		}
-		
-		return sb.toString();
-	}
 
-	@Override
-	protected boolean checkResults(ResultSet results) throws SQLException {
-		return results.next();
+		return sb.toString();
 	}
 }

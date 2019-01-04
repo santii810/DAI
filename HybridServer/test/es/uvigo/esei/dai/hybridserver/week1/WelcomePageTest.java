@@ -29,14 +29,14 @@ import es.uvigo.esei.dai.hybridserver.utils.HybridServerTestCase;
 
 public class WelcomePageTest extends HybridServerTestCase {
 	@Test
-	public void testWelcome() throws IOException {
-		assertThat(getContent(url), containsString("Hybrid Server"));
-	}
-	
-	@Test
 	public void testMultipleWelcome() throws IOException {
 		for (int i = 0; i < 10; i++) {
 			assertThat(getContent(url), containsString("Hybrid Server"));
 		}
+	}
+
+	@Test
+	public void testWelcome() throws IOException {
+		assertThat(getContent(url), containsString("Hybrid Server"));
 	}
 }

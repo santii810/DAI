@@ -22,24 +22,9 @@ import org.junit.Before;
 import es.uvigo.esei.dai.hybridserver.http.MIME;
 
 public class HTMLClientRequestsWithDatabaseTest extends AbstractClientRequestWithDatabaseTest {
-	@Before
-	public void initAttributes() {
-		this.invalidUUID = "12345678-abcd-1234-ab12-9876543210ab";
-		
-		// Estas páginas se insertan en la base de datos al inicio del test.
-		this.pages = new String[][] {
-		//  { "uuid",                                 "texto contenido por la página" }
-			{ "6df1047e-cf19-4a83-8cf3-38f5e53f7725", "<html><body>This is the html page 6df1047e-cf19-4a83-8cf3-38f5e53f7725.</body></html>" },
-			{ "79e01232-5ea4-41c8-9331-1c1880a1d3c2", "<html><body>This is the html page 79e01232-5ea4-41c8-9331-1c1880a1d3c2.</body></html>" },
-			{ "a35b6c5e-22d6-4707-98b4-462482e26c9e", "<html><body>This is the html page a35b6c5e-22d6-4707-98b4-462482e26c9e.</body></html>" },
-			{ "3aff2f9c-0c7f-4630-99ad-27a0cf1af137", "<html><body>This is the html page 3aff2f9c-0c7f-4630-99ad-27a0cf1af137.</body></html>" },
-			{ "77ec1d68-84e1-40f4-be8e-066e02f4e373", "<html><body>This is the html page 77ec1d68-84e1-40f4-be8e-066e02f4e373.</body></html>" }
-		};
-	}
-
 	@Override
-	protected String getTableName() {
-		return "HTML";
+	protected String getContentType() {
+		return MIME.TEXT_HTML.getMime();
 	}
 
 	@Override
@@ -48,7 +33,26 @@ public class HTMLClientRequestsWithDatabaseTest extends AbstractClientRequestWit
 	}
 
 	@Override
-	protected String getContentType() {
-		return MIME.TEXT_HTML.getMime();
+	protected String getTableName() {
+		return "HTML";
+	}
+
+	@Before
+	public void initAttributes() {
+		this.invalidUUID = "12345678-abcd-1234-ab12-9876543210ab";
+
+		// Estas páginas se insertan en la base de datos al inicio del test.
+		this.pages = new String[][] {
+				// { "uuid", "texto contenido por la página" }
+				{ "6df1047e-cf19-4a83-8cf3-38f5e53f7725",
+						"<html><body>This is the html page 6df1047e-cf19-4a83-8cf3-38f5e53f7725.</body></html>" },
+				{ "79e01232-5ea4-41c8-9331-1c1880a1d3c2",
+						"<html><body>This is the html page 79e01232-5ea4-41c8-9331-1c1880a1d3c2.</body></html>" },
+				{ "a35b6c5e-22d6-4707-98b4-462482e26c9e",
+						"<html><body>This is the html page a35b6c5e-22d6-4707-98b4-462482e26c9e.</body></html>" },
+				{ "3aff2f9c-0c7f-4630-99ad-27a0cf1af137",
+						"<html><body>This is the html page 3aff2f9c-0c7f-4630-99ad-27a0cf1af137.</body></html>" },
+				{ "77ec1d68-84e1-40f4-be8e-066e02f4e373",
+						"<html><body>This is the html page 77ec1d68-84e1-40f4-be8e-066e02f4e373.</body></html>" } };
 	}
 }

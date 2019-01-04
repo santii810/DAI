@@ -22,13 +22,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	Week1TestSuite.class,
-//	Week2TestSuite.class, En esta semana se utiliza el DAO en memoria, que no se require para la entrega final.
-	Week3TestSuite.class,
-	Week7TestSuite.class,
-	Week9TestSuite.class,
-	Week11TestSuite.class
-})
+@SuiteClasses({ Week1TestSuite.class,
+		// Week2TestSuite.class, En esta semana se utiliza el DAO en memoria, que no se
+		// require para la entrega final.
+		Week3TestSuite.class, Week7TestSuite.class, Week9TestSuite.class, Week11TestSuite.class })
 public class HybridServerSecondReleaseTestSuite {
 }

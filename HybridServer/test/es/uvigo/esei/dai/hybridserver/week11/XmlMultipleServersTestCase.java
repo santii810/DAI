@@ -26,30 +26,11 @@ import org.junit.runners.Parameterized;
 import es.uvigo.esei.dai.hybridserver.http.MIME;
 
 @RunWith(Parameterized.class)
-public class XmlMultipleServersTestCase
-extends AbstractGetMultipleServersTestCase {
+public class XmlMultipleServersTestCase extends AbstractGetMultipleServersTestCase {
 	private final int serverIndex;
-	
-	public XmlMultipleServersTestCase(
-		String serverName, int serverIndex
-	) {
+
+	public XmlMultipleServersTestCase(String serverName, int serverIndex) {
 		this.serverIndex = serverIndex;
-	}
-
-	@Test
-	public final void testGetLocales() throws IOException {
-		final String[] uuids = getLocalXmlUUIDs(this.serverIndex);
-		final String[] contents = getLocalXmlFiles(this.serverIndex);
-		
-		testMultipleGets(uuids, contents);
-	}
-
-	@Test
-	public final void testGetRemotes() throws IOException {
-		final String[] uuids = getRemoteXmlUUIDs(this.serverIndex);
-		final String[] contents = getRemoteXmlFiles(this.serverIndex);
-		
-		testMultipleGets(uuids, contents);
 	}
 
 	@Override
@@ -65,5 +46,21 @@ extends AbstractGetMultipleServersTestCase {
 	@Override
 	protected int getServerIndex() {
 		return this.serverIndex;
+	}
+
+	@Test
+	public final void testGetLocales() throws IOException {
+		final String[] uuids = getLocalXmlUUIDs(this.serverIndex);
+		final String[] contents = getLocalXmlFiles(this.serverIndex);
+
+		testMultipleGets(uuids, contents);
+	}
+
+	@Test
+	public final void testGetRemotes() throws IOException {
+		final String[] uuids = getRemoteXmlUUIDs(this.serverIndex);
+		final String[] contents = getRemoteXmlFiles(this.serverIndex);
+
+		testMultipleGets(uuids, contents);
 	}
 }

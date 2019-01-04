@@ -28,38 +28,35 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-public abstract class AbstractGetMultipleServersTestCase
-extends MultipleServersTestCase {
-	protected abstract int getServerIndex();
-	protected abstract String getResourceName();
+public abstract class AbstractGetMultipleServersTestCase extends MultipleServersTestCase {
 	protected abstract String getContentType();
 
-	protected void testMultipleGets(
-		final String[] uuids, final String[] expectedContents
-	) throws IOException {
-		for (int i = 0; i < uuids.length; i++) {
-			final String uuid = uuids[i];
-			final String expectedContent = expectedContents[i];
-			
-			final String url = getResourceURL(uuid);
-			final String content = getContentWithType(url, getContentType());
-			
-			assertThat(content, is(equalsToIgnoringSpaces(expectedContent)));
-		}
-	}
-	
+	protected abstract String getResourceName();
+
 	protected String getResourceURL(String uuid) {
-		return String.format("%s/%s?uuid=%s",
-			serversHTTPURL[getServerIndex()], getResourceName(), uuid
-		);
+		return String.format("%s/%s?uuid=%s", serversHTTPURL[getServerIndex()], getResourceName(), uuid);
 	}
+
+	protected abstract int getServerIndex();
 
 	@Test
 	public final void testInvalid() throws IOException {
 		for (String uuid : generateInvalidUUIDs()) {
 			final String url = getResourceURL(uuid);
-			
+
 			assertThat(getStatus(url), is(equalTo(404)));
+		}
+	}
+
+	protected void testMultipleGets(final String[] uuids, final String[] expectedContents) throws IOException {
+		for (int i = 0; i < uuids.length; i++) {
+			final String uuid = uuids[i];
+			final String expectedContent = expectedContents[i];
+
+			final String url = getResourceURL(uuid);
+			final String content = getContentWithType(url, getContentType());
+
+			assertThat(content, is(equalsToIgnoringSpaces(expectedContent)));
 		}
 	}
 }

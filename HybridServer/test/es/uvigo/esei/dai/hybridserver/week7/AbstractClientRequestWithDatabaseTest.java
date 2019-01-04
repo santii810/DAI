@@ -46,20 +46,22 @@ import org.junit.rules.Timeout;
 import es.uvigo.esei.dai.hybridserver.HybridServer;
 import es.uvigo.esei.dai.hybridserver.utils.JdbcTestCase;
 
-public abstract class AbstractClientRequestWithDatabaseTest 
-extends JdbcTestCase {
-	@Rule public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
-	
-	protected abstract String getTableName();
-	protected abstract String getResourceName();
-	protected abstract String getContentType();
+public abstract class AbstractClientRequestWithDatabaseTest extends JdbcTestCase {
+	@Rule
+	public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
 
-	protected HybridServer server;
-	protected String url;
 	protected String invalidUUID;
 	protected String[][] pages;
-	
-	
+	protected HybridServer server;
+
+	protected String url;
+
+	protected abstract String getContentType();
+
+	protected abstract String getResourceName();
+
+	protected abstract String getTableName();
+
 	@Before
 	public void startServer() throws Exception {
 		final Properties properties = new Properties();
@@ -68,10 +70,10 @@ extends JdbcTestCase {
 		properties.setProperty("db.url", getConnectionUrl());
 		properties.setProperty("db.user", getUsername());
 		properties.setProperty("db.password", getPassword());
-		
+
 		this.server = new HybridServer(properties);
 		this.url = String.format("http://localhost:%d/", this.server.getPort());
-		
+
 		this.server.start();
 	}
 
@@ -81,69 +83,39 @@ extends JdbcTestCase {
 	}
 
 	@Test
-	public void testGetList() throws IOException {
-		final String pageURL = url + getResourceName();
-		final String content = getContent(pageURL);
-		
-		for (String[] page : pages) {
-			final String uuid = page[0];
-			
-			assertThat(content, containsString(uuid));
-		}
+	public void testDelete() throws Exception {
+		final String uuid = pages[0][0];
+		final String url = this.url + getResourceName() + "?uuid=" + uuid;
+
+		// Eliminación de la página
+		assertThat("The page couldn't be deleted", deleteStatus(url), is(equalTo(200)));
+
+		// Comprobación de la eliminación en la base de datos
+		assertThat(getConnection(), hasTable(getTableName()).withColumn("uuid").withoutValue(uuid));
+
+		// Comprobación de la eliminación vía web
+		assertThat("The page already exists", getStatus(url), is(equalTo(404)));
+	}
+
+	@Test
+	public void testDeleteNonexistentPage() throws IOException {
+		final String pageURL = this.url + getResourceName() + "?uuid=" + invalidUUID;
+
+		assertThat(getStatus(pageURL), is(equalTo(404)));
 	}
 
 	@Test
 	public void testGet() throws IOException {
 		final String pageURL = url + getResourceName();
-		
+
 		for (String[] page : pages) {
 			final String uuid = page[0];
 			final String uuidPageURL = pageURL + "?uuid=" + uuid;
-			
+
 			final String content = getContentWithType(uuidPageURL, getContentType());
-	
+
 			assertThat(content, is(equalsToIgnoringSpaces(page[1])));
 		}
-	}
-
-	@Test
-	public void testPost() throws Exception {
-		final String content = "<xml><name>Testing POST</name></xml>";
-		
-		// Envío de la página y extracción del uuid de la nueva página
-		final String responseContent = postContent(url + getResourceName(), singletonMap(getResourceName(), content));
-		final String uuid = extractUUIDFromText(responseContent);
-		assertThat(uuid, is(notNullValue()));
-		
-		// Verificación de que la página de respuesta contiene un enlace a la nueva página
-		final String uuidHyperlink = "<a href=\"" + getResourceName() + "?uuid=" + uuid + "\">" + uuid + "</a>";
-		assertThat(responseContent, containsString(uuidHyperlink));
-		
-		// Recuperación de la nueva página
-		final String url = this.url + getResourceName() + "?uuid=" + uuid;
-		assertThat("The new page couldn't be retrieved", getContent(url), is(equalTo(content)));
-		
-		// Comprobación de la inserción en la base de datos
-		assertThat(getConnection(), hasTable(getTableName())
-			.withColumn("uuid").withValue(uuid)
-		);
-	}
-
-	@Test
-	public void testDelete() throws Exception {
-		final String uuid = pages[0][0];
-		final String url = this.url + getResourceName() + "?uuid=" + uuid;
-	
-		// Eliminación de la página
-		assertThat("The page couldn't be deleted", deleteStatus(url), is(equalTo(200)));
-		
-		// Comprobación de la eliminación en la base de datos
-		assertThat(getConnection(), hasTable(getTableName())
-			.withColumn("uuid").withoutValue(uuid)
-		);
-	
-		// Comprobación de la eliminación vía web
-		assertThat("The page already exists", getStatus(url), is(equalTo(404)));
 	}
 
 	@Test
@@ -154,9 +126,36 @@ extends JdbcTestCase {
 	}
 
 	@Test
-	public void testDeleteNonexistentPage() throws IOException {
-		final String pageURL = this.url + getResourceName() + "?uuid=" + invalidUUID;
+	public void testGetList() throws IOException {
+		final String pageURL = url + getResourceName();
+		final String content = getContent(pageURL);
 
-		assertThat(getStatus(pageURL), is(equalTo(404)));
+		for (String[] page : pages) {
+			final String uuid = page[0];
+
+			assertThat(content, containsString(uuid));
+		}
+	}
+
+	@Test
+	public void testPost() throws Exception {
+		final String content = "<xml><name>Testing POST</name></xml>";
+
+		// Envío de la página y extracción del uuid de la nueva página
+		final String responseContent = postContent(url + getResourceName(), singletonMap(getResourceName(), content));
+		final String uuid = extractUUIDFromText(responseContent);
+		assertThat(uuid, is(notNullValue()));
+
+		// Verificación de que la página de respuesta contiene un enlace a la nueva
+		// página
+		final String uuidHyperlink = "<a href=\"" + getResourceName() + "?uuid=" + uuid + "\">" + uuid + "</a>";
+		assertThat(responseContent, containsString(uuidHyperlink));
+
+		// Recuperación de la nueva página
+		final String url = this.url + getResourceName() + "?uuid=" + uuid;
+		assertThat("The new page couldn't be retrieved", getContent(url), is(equalTo(content)));
+
+		// Comprobación de la inserción en la base de datos
+		assertThat(getConnection(), hasTable(getTableName()).withColumn("uuid").withValue(uuid));
 	}
 }

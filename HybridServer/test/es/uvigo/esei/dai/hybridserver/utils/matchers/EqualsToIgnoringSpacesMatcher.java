@@ -21,32 +21,33 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
 /**
- * Comprueba que dos cadenas de texto son iguales ignorando los espacios en blanco.
+ * Comprueba que dos cadenas de texto son iguales ignorando los espacios en
+ * blanco.
  */
 public class EqualsToIgnoringSpacesMatcher extends BaseMatcher<String> {
+	public static EqualsToIgnoringSpacesMatcher equalsToIgnoringSpaces(String expected) {
+		return new EqualsToIgnoringSpacesMatcher(expected);
+	}
+
 	private final String expected;
-	
+
 	public EqualsToIgnoringSpacesMatcher(String expected) {
 		this.expected = expected;
-	}
-	
-	@Override
-	public boolean matches(Object item) {
-		if (item instanceof String) {
-			final String text = (String) item;
-			
-			return expected.replaceAll("\\s", "").equals(text.replaceAll("\\s", ""));
-		}
-		
-		return false;
 	}
 
 	@Override
 	public void describeTo(Description description) {
 		description.appendText("Strings are not equal ignoring whitespaces");
 	}
-	
-	public static EqualsToIgnoringSpacesMatcher equalsToIgnoringSpaces(String expected) {
-		return new EqualsToIgnoringSpacesMatcher(expected);
+
+	@Override
+	public boolean matches(Object item) {
+		if (item instanceof String) {
+			final String text = (String) item;
+
+			return expected.replaceAll("\\s", "").equals(text.replaceAll("\\s", ""));
+		}
+
+		return false;
 	}
 }

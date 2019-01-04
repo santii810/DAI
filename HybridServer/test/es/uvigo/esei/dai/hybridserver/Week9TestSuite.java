@@ -27,12 +27,8 @@ import es.uvigo.esei.dai.hybridserver.week9.InvalidXMLConfigurationLoaderTest;
 import es.uvigo.esei.dai.hybridserver.week9.XMLConfigurationLoaderTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	ConvertedXMLTest.class,
-	InvalidConvertedXMLTest.class,
-	InvalidXMLConfigurationLoaderTest.class,
-	XMLConfigurationLoaderTest.class
-})
+@SuiteClasses({ ConvertedXMLTest.class, InvalidConvertedXMLTest.class, InvalidXMLConfigurationLoaderTest.class,
+		XMLConfigurationLoaderTest.class })
 public class Week9TestSuite {
 
 }

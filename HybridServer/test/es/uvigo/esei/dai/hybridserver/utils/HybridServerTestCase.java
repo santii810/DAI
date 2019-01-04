@@ -28,23 +28,24 @@ import org.junit.rules.Timeout;
 import es.uvigo.esei.dai.hybridserver.HybridServer;
 
 public abstract class HybridServerTestCase {
+	@Rule
+	public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
 	protected HybridServer server;
+
 	protected String url;
 
-	@Rule public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
-	
+	protected HybridServer createHybridServer() {
+		return new HybridServer();
+	}
+
 	@Before
 	public void startServer() {
 		this.server = createHybridServer();
 		this.url = String.format("http://localhost:%d/", this.server.getPort());
-		
+
 		this.server.start();
 	}
-	
-	protected HybridServer createHybridServer() {
-		return new HybridServer();
-	}
-	
+
 	@After
 	public void stopServer() {
 		this.server.stop();

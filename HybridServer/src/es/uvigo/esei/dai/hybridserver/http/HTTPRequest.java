@@ -11,15 +11,15 @@ import java.util.Map;
 public class HTTPRequest {
 
 	private BufferedReader br;
-	private HTTPRequestMethod method;
-	private String resourceChain;
-	private String[] resourcePath = new String[0];
-	private String resourceName;
-	private Map<String, String> resourceParameters;
-	private String httpVersion;
-	private Map<String, String> headerParameters;
 	private String content;
 	private int contentLength;
+	private Map<String, String> headerParameters;
+	private String httpVersion;
+	private HTTPRequestMethod method;
+	private String resourceChain;
+	private String resourceName;
+	private Map<String, String> resourceParameters;
+	private String[] resourcePath = new String[0];
 
 	public HTTPRequest(Reader reader) throws IOException, HTTPParseException {
 		br = new BufferedReader(reader);
@@ -58,15 +58,46 @@ public class HTTPRequest {
 
 	}
 
-	private void readParamsFromResourceChain() {
-		String parametersString[] = resourceChain.split("\\?");
-		if (parametersString.length > 1) {
-			parametersString = parametersString[1].split("&");
-			for (String itParameters : parametersString) {
-				String[] parameters = itParameters.split("=");
-					resourceParameters.put(parameters[0], parameters[1]);
-			}
-		}
+	public String getContent() {
+		return content;
+	}
+
+	public int getContentLength() {
+		return contentLength;
+	}
+
+	public Map<String, String> getHeaderParameters() {
+		return headerParameters;
+	}
+
+	public String getHttpVersion() {
+		return httpVersion;
+	}
+
+	public HTTPRequestMethod getMethod() {
+		return method;
+	}
+
+	public String getResourceChain() {
+		return resourceChain;
+	}
+
+	public String getResourceName() {
+		return resourceName;
+	}
+
+	public Map<String, String> getResourceParameters() {
+		return resourceParameters;
+	}
+
+	public String[] getResourcePath() {
+		return resourcePath;
+	}
+
+	private void readFirstLine(String[] firstLine) {
+		method = HTTPRequestMethod.valueOf(firstLine[0]);
+		resourceChain = firstLine[1];
+		httpVersion = firstLine[2];
 	}
 
 	private void readParamsFromContent() throws IOException, UnsupportedEncodingException {
@@ -89,46 +120,15 @@ public class HTTPRequest {
 		}
 	}
 
-	private void readFirstLine(String[] firstLine) {
-		method = HTTPRequestMethod.valueOf(firstLine[0]);
-		resourceChain = firstLine[1];
-		httpVersion = firstLine[2];
-	}
-
-	public HTTPRequestMethod getMethod() {
-		return method;
-	}
-
-	public String getResourceChain() {
-		return resourceChain;
-	}
-
-	public String[] getResourcePath() {
-		return resourcePath;
-	}
-
-	public String getResourceName() {
-		return resourceName;
-	}
-
-	public Map<String, String> getResourceParameters() {
-		return resourceParameters;
-	}
-
-	public String getHttpVersion() {
-		return httpVersion;
-	}
-
-	public Map<String, String> getHeaderParameters() {
-		return headerParameters;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public int getContentLength() {
-		return contentLength;
+	private void readParamsFromResourceChain() {
+		String parametersString[] = resourceChain.split("\\?");
+		if (parametersString.length > 1) {
+			parametersString = parametersString[1].split("&");
+			for (String itParameters : parametersString) {
+				String[] parameters = itParameters.split("=");
+				resourceParameters.put(parameters[0], parameters[1]);
+			}
+		}
 	}
 
 	@Override

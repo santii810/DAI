@@ -33,22 +33,18 @@ import org.junit.runners.Parameterized;
 import es.uvigo.esei.dai.hybridserver.http.MIME;
 
 @RunWith(Parameterized.class)
-public class HtmlMultipleServersTestCase
-extends MultipleServersTestCase {
+public class HtmlMultipleServersTestCase extends MultipleServersTestCase {
 	private final int serverIndex;
-	
-	public HtmlMultipleServersTestCase(
-		String serverName, int serverIndex
-	) {
+
+	public HtmlMultipleServersTestCase(String serverName, int serverIndex) {
 		this.serverIndex = serverIndex;
 	}
 
 	@Test
 	public final void testGetLocales() throws IOException {
 		for (String uuid : getLocalHtmlUUIDs(this.serverIndex)) {
-			final String url = String.format("%s/html?uuid=%s",
-				serversHTTPURL[serverIndex], uuid);
-			
+			final String url = String.format("%s/html?uuid=%s", serversHTTPURL[serverIndex], uuid);
+
 			assertThat(getContentWithType(url, MIME.TEXT_HTML.getMime()), containsString(uuid));
 		}
 	}
@@ -56,9 +52,8 @@ extends MultipleServersTestCase {
 	@Test
 	public final void testGetRemotes() throws IOException {
 		for (String uuid : getRemoteHtmlUUIDs(this.serverIndex)) {
-			final String url = String.format("%s/html?uuid=%s",
-				serversHTTPURL[serverIndex], uuid);
-			
+			final String url = String.format("%s/html?uuid=%s", serversHTTPURL[serverIndex], uuid);
+
 			assertThat(getContentWithType(url, MIME.TEXT_HTML.getMime()), containsString(uuid));
 		}
 	}
@@ -66,8 +61,7 @@ extends MultipleServersTestCase {
 	@Test
 	public final void testInvalid() throws IOException {
 		for (String uuid : generateInvalidUUIDs()) {
-			final String url = String.format("%s/html?uuid=%s",
-				serversHTTPURL[serverIndex], uuid);
+			final String url = String.format("%s/html?uuid=%s", serversHTTPURL[serverIndex], uuid);
 
 			assertThat(getStatus(url), is(equalTo(404)));
 		}

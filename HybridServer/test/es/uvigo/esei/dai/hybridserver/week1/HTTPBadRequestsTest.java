@@ -33,59 +33,34 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 
 @RunWith(Parameterized.class)
 public class HTTPBadRequestsTest {
-	private String requestText;
-	
-	public HTTPBadRequestsTest(String testName, String requestText) {
-		this.requestText = requestText;
-	}
-	
 	@Parameters(name = "{0}")
 	public static Collection<String[]> parameters() {
 		return asList(
-			new String[] {
-				"Missing method", 
-				"/hello HTTP/1.1\r\n" +
-				"Host: localhost\r\n" +
-				"Accept: text/html\r\n" +
-				"Accept-Encoding: gzip,deflate\r\n"
-			},
-			new String[] {
-				"Missing resource", 
-				"GET HTTP/1.1\r\n" +
-				"Host: localhost\r\n" +
-				"Accept: text/html\r\n" +
-				"Accept-Encoding: gzip,deflate\r\n"
-			},
-			new String[] {
-				"Missing version", 
-				"GET /hello\r\n" +
-				"Host: localhost\r\n" +
-				"Accept: text/html\r\n" +
-				"Accept-Encoding: gzip,deflate\r\n"
-			},
-			new String[] {
-				"Missing first line",
-				"Host: localhost\r\n" +
-				"Accept: text/html\r\n" +
-				"Accept-Encoding: gzip,deflate\r\n"
-			},
-			new String[] {
-				"Invalid header",
-				"GET /hello/world.html?country=Spain&province=Ourense&city=Ourense HTTP/1.1\r\n" +
-				"Host\r\n" +
-				"Accept: text/html\r\n" +
-				"Accept-Encoding: gzip,deflate\r\n"
-			},
-			new String[] {
-				"Missing new line after header",
-				"GET /hello/world.html?country=Spain&province=Ourense&city=Ourense HTTP/1.1\r\n" +
-				"Host\r\n" +
-				"Accept: text/html\r\n" +
-				"Accept-Encoding: gzip,deflate\r\n"
-			}
-		);
+				new String[] { "Missing method",
+						"/hello HTTP/1.1\r\n" + "Host: localhost\r\n" + "Accept: text/html\r\n"
+								+ "Accept-Encoding: gzip,deflate\r\n" },
+				new String[] { "Missing resource",
+						"GET HTTP/1.1\r\n" + "Host: localhost\r\n" + "Accept: text/html\r\n"
+								+ "Accept-Encoding: gzip,deflate\r\n" },
+				new String[] { "Missing version",
+						"GET /hello\r\n" + "Host: localhost\r\n" + "Accept: text/html\r\n"
+								+ "Accept-Encoding: gzip,deflate\r\n" },
+				new String[] { "Missing first line",
+						"Host: localhost\r\n" + "Accept: text/html\r\n" + "Accept-Encoding: gzip,deflate\r\n" },
+				new String[] { "Invalid header",
+						"GET /hello/world.html?country=Spain&province=Ourense&city=Ourense HTTP/1.1\r\n" + "Host\r\n"
+								+ "Accept: text/html\r\n" + "Accept-Encoding: gzip,deflate\r\n" },
+				new String[] { "Missing new line after header",
+						"GET /hello/world.html?country=Spain&province=Ourense&city=Ourense HTTP/1.1\r\n" + "Host\r\n"
+								+ "Accept: text/html\r\n" + "Accept-Encoding: gzip,deflate\r\n" });
 	}
-	
+
+	private String requestText;
+
+	public HTTPBadRequestsTest(String testName, String requestText) {
+		this.requestText = requestText;
+	}
+
 	@Test(expected = HTTPParseException.class)
 	public void test() throws IOException, HTTPParseException {
 		new HTTPRequest(new StringReader(requestText));

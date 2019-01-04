@@ -42,34 +42,26 @@ import es.uvigo.esei.dai.hybridserver.HybridServer;
 
 @RunWith(Parameterized.class)
 public class CustomPortTest {
-	@Rule public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
-	
-	protected HybridServer server;
-	protected String url;
-	protected int port;
-	
-	public CustomPortTest(Integer port) {
-		this.port = port;
-	}
-	
 	@Parameters
 	public static Collection<Object[]> portsToTest() {
 		// Si algún otro programa del sistema está utilizando estos puertos
 		// entonces saltará una excepción diciendo que el puerto ya está ocupado
-		return Arrays.asList(
-			new Object[] { 1234 },
-			new Object[] { 4242 },
-			new Object[] { 7315 },
-			new Object[] { 8833 },
-			new Object[] { 10201 },
-			new Object[] { 21386 },
-			new Object[] { 33217 },
-			new Object[] { 45450 },
-			new Object[] { 55881 },
-			new Object[] { 60000 }
-		);
+		return Arrays.asList(new Object[] { 1234 }, new Object[] { 4242 }, new Object[] { 7315 }, new Object[] { 8833 },
+				new Object[] { 10201 }, new Object[] { 21386 }, new Object[] { 33217 }, new Object[] { 45450 },
+				new Object[] { 55881 }, new Object[] { 60000 });
 	}
-	
+
+	@Rule
+	public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
+	protected int port;
+	protected HybridServer server;
+
+	protected String url;
+
+	public CustomPortTest(Integer port) {
+		this.port = port;
+	}
+
 	@Before
 	public void startServer() throws SQLException {
 		final Properties properties = new Properties();
@@ -78,27 +70,27 @@ public class CustomPortTest {
 		properties.setProperty("db.url", "jdbc:mysql://localhost/hstestdb");
 		properties.setProperty("db.user", "dai");
 		properties.setProperty("db.password", "daipassword");
-		
+
 		this.server = new HybridServer(properties);
 		this.url = String.format("http://localhost:%d/", this.port);
-		
+
 		this.server.start();
 	}
-	
+
 	@After
 	public void stopServer() {
 		this.server.stop();
 	}
-	
-	@Test
-	public void testWelcome() throws IOException {
-		assertThat(getContent(url), containsString("Hybrid Server"));
-	}
-	
+
 	@Test
 	public void testMultipleWelcome() throws IOException {
 		for (int i = 0; i < 10; i++) {
 			assertThat(getContent(url), containsString("Hybrid Server"));
 		}
+	}
+
+	@Test
+	public void testWelcome() throws IOException {
+		assertThat(getContent(url), containsString("Hybrid Server"));
 	}
 }

@@ -18,17 +18,14 @@
 package es.uvigo.esei.dai.hybridserver.http;
 
 public enum HTTPHeaders {
-	CONTENT_LENGTH("Content-Length"),
-	CONTENT_TYPE("Content-Type"),
-	HTTP_1_1("HTTP/1.1"), 
-	CONNECTION("Connection");
-	
+	CONNECTION("Connection"), CONTENT_LENGTH("Content-Length"), CONTENT_TYPE("Content-Type"), HTTP_1_1("HTTP/1.1");
+
 	private String header;
-	
+
 	private HTTPHeaders(String header) {
 		this.header = header;
 	}
-	
+
 	public String getHeader() {
 		return header;
 	}

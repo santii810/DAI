@@ -29,14 +29,9 @@ import es.uvigo.esei.dai.hybridserver.week11.XsdMultipleServersTestCase;
 import es.uvigo.esei.dai.hybridserver.week11.XsltMultipleServersTestCase;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	WelcomeAndListsMultipleServersTestCase.class,
-	HtmlMultipleServersTestCase.class,
-	XmlMultipleServersTestCase.class,
-	XsdMultipleServersTestCase.class,
-	XsltMultipleServersTestCase.class,
-	TransformedMultipleServersTestCase.class
-})
+@SuiteClasses({ WelcomeAndListsMultipleServersTestCase.class, HtmlMultipleServersTestCase.class,
+		XmlMultipleServersTestCase.class, XsdMultipleServersTestCase.class, XsltMultipleServersTestCase.class,
+		TransformedMultipleServersTestCase.class })
 public class Week11TestSuite {
 
 }

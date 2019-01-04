@@ -27,16 +27,15 @@ public class HTTPParseException extends Exception {
 		super(message);
 	}
 
-	public HTTPParseException(Throwable cause) {
-		super(cause);
-	}
-
 	public HTTPParseException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public HTTPParseException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
+	public HTTPParseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
+	}
+
+	public HTTPParseException(Throwable cause) {
+		super(cause);
 	}
 }

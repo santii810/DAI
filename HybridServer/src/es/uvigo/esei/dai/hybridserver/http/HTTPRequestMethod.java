@@ -18,5 +18,5 @@
 package es.uvigo.esei.dai.hybridserver.http;
 
 public enum HTTPRequestMethod {
-	HEAD, GET, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT;
+	CONNECT, DELETE, GET, HEAD, OPTIONS, POST, PUT, TRACE;
 }

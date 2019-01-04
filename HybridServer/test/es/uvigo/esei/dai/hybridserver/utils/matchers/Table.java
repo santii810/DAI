@@ -21,27 +21,27 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Table {
-	private final String name;
 	private final List<Column> columns;
-	
+	private final String name;
+
 	Table(String name) {
 		this.name = name;
 		this.columns = new LinkedList<>();
 	}
-	
-	public Column withColumn(String name) {
-		return new Column(this, name);
-	}
-	
+
 	void addColumn(Column column) {
 		this.columns.add(column);
 	}
-	
+
+	List<Column> getColumns() {
+		return columns;
+	}
+
 	String getName() {
 		return name;
 	}
-	
-	List<Column> getColumns() {
-		return columns;
+
+	public Column withColumn(String name) {
+		return new Column(this, name);
 	}
 }

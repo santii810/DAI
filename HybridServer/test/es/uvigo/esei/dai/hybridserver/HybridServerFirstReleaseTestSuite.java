@@ -22,9 +22,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	Week1TestSuite.class,
-	Week3TestSuite.class
-})
+@SuiteClasses({ Week1TestSuite.class, Week3TestSuite.class })
 public class HybridServerFirstReleaseTestSuite {
 }

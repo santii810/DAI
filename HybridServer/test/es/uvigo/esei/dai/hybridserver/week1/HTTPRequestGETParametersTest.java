@@ -19,65 +19,15 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequestMethod;
 
 public class HTTPRequestGETParametersTest {
-	private String requestText;
 	private HTTPRequest request;
-	
+	private String requestText;
+
 	@Before
 	public void setUp() throws Exception {
-		requestText = 
-			"GET /hello/world.html?country=Spain&province=Ourense&city=Ourense HTTP/1.1\r\n" +
-			"Host: localhost\r\n" +
-			"Accept: text/html\r\n" +
-			"Accept-Encoding: gzip,deflate\r\n";
-		
-		request = new HTTPRequest(new StringReader(
-			requestText + "\r\n"
-		));
-	}
+		requestText = "GET /hello/world.html?country=Spain&province=Ourense&city=Ourense HTTP/1.1\r\n"
+				+ "Host: localhost\r\n" + "Accept: text/html\r\n" + "Accept-Encoding: gzip,deflate\r\n";
 
-	@Test
-	public final void testGetMethod() {
-		assertThat(request.getMethod(), is(equalTo(HTTPRequestMethod.GET)));
-	}
-
-	@Test
-	public final void testGetResourceChain() {
-		assertThat(request.getResourceChain(), is(equalTo("/hello/world.html?country=Spain&province=Ourense&city=Ourense")));
-	}
-
-	@Test
-	public final void testGetResourcePath() {
-		assertThat(request.getResourcePath(), is(arrayContaining("hello", "world.html")));
-	}
-
-	@Test
-	public final void testGetResourceName() {
-		assertThat(request.getResourceName(), is(equalTo("hello/world.html")));
-	}
-
-	@Test
-	public final void testGetHttpVersion() {
-		assertThat(request.getHttpVersion(), is(equalTo(HTTPHeaders.HTTP_1_1.getHeader())));
-	}
-
-	@Test
-	public final void testGetResourceParameters() {
-		assertThat(request.getResourceParameters(), allOf(
-			hasEntry("country", "Spain"),
-			hasEntry("province", "Ourense"),
-			hasEntry("city", "Ourense")
-		));
-		assertThat(request.getResourceParameters(), is(aMapWithSize(3)));
-	}
-
-	@Test
-	public final void testGetHeaderParameters() {
-		assertThat(request.getHeaderParameters(), allOf(
-			hasEntry("Host", "localhost"),
-			hasEntry("Accept", "text/html"),
-			hasEntry("Accept-Encoding", "gzip,deflate")
-		));
-		assertThat(request.getHeaderParameters(), is(aMapWithSize(3)));
+		request = new HTTPRequest(new StringReader(requestText + "\r\n"));
 	}
 
 	@Test
@@ -88,6 +38,46 @@ public class HTTPRequestGETParametersTest {
 	@Test
 	public final void testGetContentLength() {
 		assertThat(request.getContentLength(), is(equalTo(0)));
+	}
+
+	@Test
+	public final void testGetHeaderParameters() {
+		assertThat(request.getHeaderParameters(), allOf(hasEntry("Host", "localhost"), hasEntry("Accept", "text/html"),
+				hasEntry("Accept-Encoding", "gzip,deflate")));
+		assertThat(request.getHeaderParameters(), is(aMapWithSize(3)));
+	}
+
+	@Test
+	public final void testGetHttpVersion() {
+		assertThat(request.getHttpVersion(), is(equalTo(HTTPHeaders.HTTP_1_1.getHeader())));
+	}
+
+	@Test
+	public final void testGetMethod() {
+		assertThat(request.getMethod(), is(equalTo(HTTPRequestMethod.GET)));
+	}
+
+	@Test
+	public final void testGetResourceChain() {
+		assertThat(request.getResourceChain(),
+				is(equalTo("/hello/world.html?country=Spain&province=Ourense&city=Ourense")));
+	}
+
+	@Test
+	public final void testGetResourceName() {
+		assertThat(request.getResourceName(), is(equalTo("hello/world.html")));
+	}
+
+	@Test
+	public final void testGetResourceParameters() {
+		assertThat(request.getResourceParameters(),
+				allOf(hasEntry("country", "Spain"), hasEntry("province", "Ourense"), hasEntry("city", "Ourense")));
+		assertThat(request.getResourceParameters(), is(aMapWithSize(3)));
+	}
+
+	@Test
+	public final void testGetResourcePath() {
+		assertThat(request.getResourcePath(), is(arrayContaining("hello", "world.html")));
 	}
 
 	@Test

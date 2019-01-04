@@ -22,20 +22,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	HTTPBadRequestsTest.class,
-	HTTPRequestGETRootTest.class,
-	HTTPRequestGETResourceTest.class,
-	HTTPRequestGETResourcesTest.class,
-	HTTPRequestGETParametersTest.class,
-	HTTPRequestPOSTOneParameterTest.class,
-	HTTPRequestPOSTMultipleParametersTest.class,
-	HTTPRequestPOSTEncodedTest.class,
-	HTTPResponseNoContentTest.class,
-	HTTPResponseNoContentWithHeadersTest.class,
-	HTTPResponseTest.class,
-	HTTPResponseWithHeadersTest.class
-})
+@SuiteClasses({ HTTPBadRequestsTest.class, HTTPRequestGETRootTest.class, HTTPRequestGETResourceTest.class,
+		HTTPRequestGETResourcesTest.class, HTTPRequestGETParametersTest.class, HTTPRequestPOSTOneParameterTest.class,
+		HTTPRequestPOSTMultipleParametersTest.class, HTTPRequestPOSTEncodedTest.class, HTTPResponseNoContentTest.class,
+		HTTPResponseNoContentWithHeadersTest.class, HTTPResponseTest.class, HTTPResponseWithHeadersTest.class })
 public class HTTPRequestResponseSuite {
 
 }

@@ -25,11 +25,21 @@ import java.sql.Statement;
 import org.hamcrest.TypeSafeMatcher;
 
 public abstract class TableMatcher extends TypeSafeMatcher<Connection> {
+	public static Table hasTable(String name) {
+		return new Table(name);
+	}
+
 	protected final Table table;
-	
+
 	TableMatcher(Table table) {
 		this.table = table;
 	}
+
+	public Column andColumn(String name) {
+		return new Column(this.table, name);
+	}
+
+	protected abstract boolean checkResults(ResultSet results) throws SQLException;
 
 	@Override
 	protected boolean matchesSafely(Connection connection) {
@@ -43,13 +53,4 @@ public abstract class TableMatcher extends TypeSafeMatcher<Connection> {
 	}
 
 	protected abstract String toSQL();
-	protected abstract boolean checkResults(ResultSet results) throws SQLException;
-
-	public static Table hasTable(String name) {
-		return new Table(name);
-	}
-	
-	public Column andColumn(String name) {
-		return new Column(this.table, name);
-	}
 }

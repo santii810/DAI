@@ -28,8 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import es.uvigo.esei.dai.hybridserver.Configuration;
-import es.uvigo.esei.dai.hybridserver.ServerConfiguration;
 import es.uvigo.esei.dai.hybridserver.XMLConfigurationLoader;
+import es.uvigo.esei.dai.hybridserver.webService.ServerConfiguration;
 
 public class XMLConfigurationLoaderTest {
 	private XMLConfigurationLoader xmlConfiguration;
@@ -40,19 +40,17 @@ public class XMLConfigurationLoaderTest {
 	}
 
 	@Test
-	public final void testLoad()
-	throws Exception {
-		final Configuration configuration = 
-			xmlConfiguration.load(new File("test/configuration.xml"));
-		
+	public final void testLoad() throws Exception {
+		final Configuration configuration = xmlConfiguration.load(new File("test/configuration.xml"));
+
 		assertThat(configuration.getHttpPort(), is(equalTo(10000)));
 		assertThat(configuration.getNumClients(), is(equalTo(15)));
 		assertThat(configuration.getWebServiceURL(), is(equalTo("http://localhost:20000/hybridserver")));
-		
+
 		assertThat(configuration.getDbUser(), is(equalTo("hsdb")));
 		assertThat(configuration.getDbPassword(), is(equalTo("hsdbpass")));
 		assertThat(configuration.getDbURL(), is(equalTo("jdbc:mysql://localhost:3306/hsdb")));
-		
+
 		assertThat(configuration.getServers(), hasSize(3));
 		ServerConfiguration server = configuration.getServers().get(0);
 		assertThat(server.getName(), is(equalTo("Server 2")));
@@ -60,14 +58,14 @@ public class XMLConfigurationLoaderTest {
 		assertThat(server.getNamespace(), is(equalTo("http://hybridserver.dai.esei.uvigo.es/")));
 		assertThat(server.getService(), is(equalTo("ControllerService")));
 		assertThat(server.getHttpAddress(), is(equalTo("http://localhost:10001/")));
-		
+
 		server = configuration.getServers().get(1);
 		assertThat(server.getName(), is(equalTo("Server 3")));
 		assertThat(server.getWsdl(), is(equalTo("http://localhost:20002/hs?wsdl")));
 		assertThat(server.getNamespace(), is(equalTo("http://hybridserver.dai.esei.uvigo.es/")));
 		assertThat(server.getService(), is(equalTo("ControllerService")));
 		assertThat(server.getHttpAddress(), is(equalTo("http://localhost:10002/")));
-		
+
 		server = configuration.getServers().get(2);
 		assertThat(server.getName(), is(equalTo("Server 4")));
 		assertThat(server.getWsdl(), is(equalTo("http://localhost:20003/hs?wsdl")));

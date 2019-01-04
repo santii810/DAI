@@ -30,31 +30,26 @@ import es.uvigo.esei.dai.hybridserver.XMLConfigurationLoader;
 
 @RunWith(Parameterized.class)
 public class InvalidXMLConfigurationLoaderTest {
+	@Parameters(name = "{0}")
+	public static Collection<Object[]> parameters() {
+		return Arrays.asList(new Object[] { "Missing http parameter", "test/invalid-configuration1.xml" },
+				new Object[] { "Missing database configuration", "test/invalid-configuration2.xml" },
+				new Object[] { "Invalid http port number", "test/invalid-configuration3.xml" },
+				new Object[] { "Invalid number of clients", "test/invalid-configuration4.xml" },
+				new Object[] { "Missing attributes in server", "test/invalid-configuration5.xml" });
+	}
+
 	private XMLConfigurationLoader xmlConfiguration;
 
 	private final String xmlFilePath;
-	
-	public InvalidXMLConfigurationLoaderTest(
-		String name, String xmlFilePath
-	) {
+
+	public InvalidXMLConfigurationLoaderTest(String name, String xmlFilePath) {
 		this.xmlFilePath = xmlFilePath;
 		this.xmlConfiguration = new XMLConfigurationLoader();
 	}
 
-	@Parameters(name = "{0}")
-	public static Collection<Object[]> parameters() {
-		return Arrays.asList(
-			new Object[] { "Missing http parameter", "test/invalid-configuration1.xml" },
-			new Object[] { "Missing database configuration", "test/invalid-configuration2.xml" },
-			new Object[] { "Invalid http port number", "test/invalid-configuration3.xml" },
-			new Object[] { "Invalid number of clients", "test/invalid-configuration4.xml" },
-			new Object[] { "Missing attributes in server", "test/invalid-configuration5.xml" }
-		);
-	}
-	
 	@Test(expected = Exception.class)
-	public final void testLoad()
-	throws Exception {
+	public final void testLoad() throws Exception {
 		xmlConfiguration.load(new File(xmlFilePath));
 	}
 }
