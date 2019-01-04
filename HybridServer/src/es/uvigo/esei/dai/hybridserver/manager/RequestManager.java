@@ -6,6 +6,7 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
+import es.uvigo.esei.dai.hybridserver.http.MIME;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
 public abstract class RequestManager implements FileRequest {
@@ -69,7 +70,8 @@ public abstract class RequestManager implements FileRequest {
 	}
 
 	protected String buildHtml(String content) {
-		return "<html><head><meta charset=\"utf-8\"></head><body>\r\n" + content + "</body></html>";
+		response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
+		return "<html><head><meta charset=\"utf-8\"/></head><body>\r\n" + content + "</body></html>";
 	}
 
 	public static void responseBadRequest(HTTPResponse response) {

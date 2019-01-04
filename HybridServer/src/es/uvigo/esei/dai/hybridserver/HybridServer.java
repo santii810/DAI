@@ -37,8 +37,6 @@ public class HybridServer {
 		this.pagesDAO = new DBpagesDAO(dbUrl, dbUser, dbPassword);
 	}
 
-
-
 	public HybridServer(Properties properties) {
 		this.numClients = Integer.parseInt(properties.getProperty("numClient", Integer.toString(DEFAULT_SERVICE_PORT)));
 		this.port = Integer.parseInt(properties.getProperty("port", Integer.toString(DEFAULT_SERVICE_PORT)));
@@ -49,7 +47,12 @@ public class HybridServer {
 	}
 
 	public HybridServer(Configuration configuration) {
-		// TODO Auto-generated constructor stub
+		this.numClients = configuration.getNumClients();
+		this.port = configuration.getHttpPort();
+		this.dbUrl = configuration.getDbURL();
+		this.dbUser = configuration.getDbUser();
+		this.dbPassword = configuration.getDbPassword();
+		this.pagesDAO = new DBpagesDAO(dbUrl, dbUser, dbPassword);
 	}
 
 	public int getPort() {

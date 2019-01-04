@@ -64,10 +64,10 @@ public class DBpagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public void addPage(String uuid, String content) {
+	public void addPage(String uuid, String content, String table) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO HTML (uuid, content) " + "VALUES (?, ?)")) {
+					.prepareStatement("INSERT INTO " + table + " (uuid, content) " + "VALUES (?, ?)")) {
 				statement.setString(1, uuid);
 				statement.setString(2, content);
 				int result = statement.executeUpdate();
@@ -104,9 +104,9 @@ public class DBpagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public void delete(String uuid) {
+	public void delete(String uuid, String table) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM HTML WHERE uuid=?")) {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM " + table + " WHERE uuid=?")) {
 				statement.setString(1, uuid);
 				int result = statement.executeUpdate();
 				if (result != 1) {
@@ -135,6 +135,46 @@ public class DBpagesDAO implements PagesDAO {
 				try (ResultSet result = statement.executeQuery()) {
 					result.next();
 					return new String[] { result.getString("content"), result.getString("xsd") };
+				}
+			} catch (SQLException queryException) {
+				System.out.println("Query error");
+				throw new RuntimeException(queryException);
+			}
+		} catch (SQLException connectionException) {
+			System.out.println("Connection error");
+			throw new RuntimeException(connectionException);
+		}
+
+	}
+
+	@Override
+	public void deleteXSLTAssociated(String uuid) {
+		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM XSLT WHERE xsd=?")) {
+				statement.setString(1, uuid);
+				statement.executeUpdate();
+			} catch (SQLException queryException) {
+				System.out.println("Query error");
+				throw new RuntimeException(queryException);
+			}
+		} catch (SQLException connectionException) {
+			System.out.println("Connection error");
+			throw new RuntimeException(connectionException);
+		}
+
+	}
+
+	@Override
+	public void addXSLTPage(String xsltUuid, String xsltContent, String xsdAssociated) {
+		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+			try (PreparedStatement statement = connection
+					.prepareStatement("INSERT INTO XSLT (uuid, content, xsd) " + "VALUES (?, ?,?)")) {
+				statement.setString(1, xsltUuid);
+				statement.setString(2, xsltContent);
+				statement.setString(3, xsdAssociated);
+				int result = statement.executeUpdate();
+				if (result != 1) {
+					throw new SQLException("Insertion error");
 				}
 			} catch (SQLException queryException) {
 				System.out.println("Query error");

@@ -1,5 +1,6 @@
 package es.uvigo.esei.dai.hybridserver;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
@@ -12,14 +13,21 @@ public class Launcher {
 		if (args.length == 1) {
 			String fileName = args[0];
 
-			Properties properties = new Properties();
-			try (FileInputStream inStream = new FileInputStream(fileName)) {
-				properties.load(inStream);
-
-				new HybridServer(properties).start();
-			} catch (Exception e) {
-				System.out.println("Error reading Properties file");
+			XMLConfigurationLoader configuration = new XMLConfigurationLoader();
+			try {
+				new HybridServer(configuration.load(new File(args[0]))).start();
+			} catch (Exception e1) {
+				System.out.println("Error reading configuration file");
 			}
+
+//			Properties properties = new Properties();
+//			try (FileInputStream inStream = new FileInputStream(fileName)) {
+//				properties.load(inStream);
+//				new HybridServer(properties).start();
+//			} catch (Exception e) {
+//				System.out.println("Error reading Properties file");
+//			}
+
 		} else {
 			new HybridServer().start();
 		}

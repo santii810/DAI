@@ -15,35 +15,54 @@ public class POSTRequestManager extends RequestManager {
 
 	@Override
 	public void manageHTMLRequest() {
-		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals("html")
-				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("html")) {
-			UUID randomUuid = UUID.randomUUID();
-			pagesDAO.addPage(randomUuid.toString(), request.getResourceParameters().get("html"));
+		manageGeneralRequest("html", PagesDAO.HTML_TABLE_NAME);
+	}
 
-			response.setContent(
-					"<a href=\"html?uuid=" + randomUuid.toString() + "\">" + randomUuid.toString() + "</a>");
-			response.setStatus(HTTPResponseStatus.S200);
+	@Override
+	public void manageXSDRequest() {
+		manageGeneralRequest("xsd", PagesDAO.XSD_TABLE_NAME);
+	}
+
+	@Override
+	public void manageXSLTRequest() {
+		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals("xslt")
+				& !request.getResourceParameters().isEmpty() & request.getResourceParameters().containsKey("xslt")
+				& request.getResourceParameters().containsKey("xsd")) {
+			if (pagesDAO.containsUuid(request.getResourceParameters().get("xsd"), pagesDAO.XSD_TABLE_NAME)) {
+				UUID randomUuid = UUID.randomUUID();
+				pagesDAO.addXSLTPage(randomUuid.toString(), request.getResourceParameters().get("xslt"),
+						request.getResourceParameters().get("xsd"));
+
+				response.setContent(
+						"<a href=\"xslt?uuid=" + randomUuid.toString() + "\">" + randomUuid.toString() + "</a>");
+				response.setStatus(HTTPResponseStatus.S200);
+			}else {
+				response.setStatus(HTTPResponseStatus.S404);
+				response.setContent(buildHtml("<p> xsd no encontrado</p>"));
+
+			}
 		} else {
 			response.setStatus(HTTPResponseStatus.S400);
 		}
 	}
 
 	@Override
-	public void manageXSDRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void manageXSLTRequest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void manageXMLRequest() {
-		// TODO Auto-generated method stub
-
+		manageGeneralRequest("xml", PagesDAO.XML_TABLE_NAME);
 	}
 
+	private void manageGeneralRequest(String requestType, String table) {
+		if (!request.getResourceParameters().isEmpty() & request.getResourceName().equals(requestType)
+				& !request.getResourceParameters().isEmpty()
+				& request.getResourceParameters().containsKey(requestType)) {
+			UUID randomUuid = UUID.randomUUID();
+			pagesDAO.addPage(randomUuid.toString(), request.getResourceParameters().get(requestType), table);
+
+			response.setContent("<a href=\"" + requestType + "?uuid=" + randomUuid.toString() + "\">"
+					+ randomUuid.toString() + "</a>");
+			response.setStatus(HTTPResponseStatus.S200);
+		} else {
+			response.setStatus(HTTPResponseStatus.S400);
+		}
+	}
 }
