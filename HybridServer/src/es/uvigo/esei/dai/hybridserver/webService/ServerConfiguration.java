@@ -15,69 +15,63 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.uvigo.esei.dai.hybridserver;
+package es.uvigo.esei.dai.hybridserver.webService;
 
 public class ServerConfiguration {
+	private String httpAddress;
 	private String name;
-	private String wsdl;
 	private String namespace;
 	private String service;
-	private String httpAddress;
-	
+	private String wsdl;
+
 	public ServerConfiguration() {
 	}
-	
-	public ServerConfiguration(
-		String name,
-		String wsdl,
-		String namespace,
-		String service,
-		String httpAddress
-	) {
+
+	public ServerConfiguration(String name, String wsdl, String namespace, String service, String httpAddress) {
 		this.name = name;
 		this.wsdl = wsdl;
 		this.namespace = namespace;
 		this.service = service;
 		this.httpAddress = httpAddress;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getWsdl() {
-		return wsdl;
-	}
-
-	public void setWsdl(String wsdl) {
-		this.wsdl = wsdl;
-	}
-
-	public String getNamespace() {
-		return namespace;
-	}
-
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
-
-	public String getService() {
-		return service;
-	}
-
-	public void setService(String service) {
-		this.service = service;
 	}
 
 	public String getHttpAddress() {
 		return httpAddress;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public String getNamespace() {
+		return namespace;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public String getWsdl() {
+		return wsdl;
+	}
+
 	public void setHttpAddress(String httpAddress) {
 		this.httpAddress = httpAddress;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public void setWsdl(String wsdl) {
+		this.wsdl = wsdl;
 	}
 }

@@ -9,11 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.uvigo.esei.dai.hybridserver.model.Page;
+
 public class DBpagesDAO implements PagesDAO {
 
+	private String dbPassword;
 	private String dbUrl;
 	private String dbUser;
-	private String dbPassword;
 
 	public DBpagesDAO(String dbUrl, String dbUser, String dbPassword) {
 		this.dbUrl = dbUrl;
@@ -22,54 +24,37 @@ public class DBpagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public List<String> getUuidFromTable(String dbTable) {
-		List<String> toret = new ArrayList<>();
-		String query = "SELECT uuid FROM " + dbTable;
-		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-			try (Statement statement = connection.createStatement()) {
-				try (ResultSet result = statement.executeQuery(query)) {
-					while (result.next()) {
-						toret.add(result.getString("uuid"));
+	public void addPage(Page page, String table) {
+		if (table.equals(XSLT_TABLE_NAME)) {
+			this.addXSLTPage(page);
+		} else {
+			try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+				try (PreparedStatement statement = connection
+						.prepareStatement("INSERT INTO " + table + " (uuid, content) " + "VALUES (?, ?)")) {
+					statement.setString(1, page.getUuid());
+					statement.setString(2, page.getContent());
+					int result = statement.executeUpdate();
+					if (result != 1) {
+						throw new SQLException("Insertion error");
 					}
+				} catch (SQLException queryException) {
+					System.out.println("Query error");
+					throw new RuntimeException(queryException);
 				}
-			} catch (SQLException queryException) {
-				System.out.println("Query error");
-				throw new RuntimeException(queryException);
+			} catch (SQLException connectionException) {
+				System.out.println("Connection error");
+				throw new RuntimeException(connectionException);
 			}
-		} catch (SQLException connectionException) {
-			System.out.println("Connection error");
-			throw new RuntimeException(connectionException);
-		}
-		return toret;
-	}
-
-	@Override
-	public String getValue(String uuid, String dbTable) {
-		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-			try (PreparedStatement statement = connection
-					.prepareStatement("SELECT content FROM " + dbTable + " WHERE uuid = ?")) {
-				statement.setString(1, uuid);
-				try (ResultSet result = statement.executeQuery()) {
-					result.next();
-					return result.getString("content");
-				}
-			} catch (SQLException queryException) {
-				System.out.println("Query error");
-				throw new RuntimeException(queryException);
-			}
-		} catch (SQLException connectionException) {
-			System.out.println("Connection error");
-			throw new RuntimeException(connectionException);
 		}
 	}
 
-	@Override
-	public void addPage(String uuid, String content, String table) {
+	private void addXSLTPage(Page page) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO " + table + " (uuid, content) " + "VALUES (?, ?)")) {
-				statement.setString(1, uuid);
-				statement.setString(2, content);
+					.prepareStatement("INSERT INTO XSLT (uuid, content, xsd) " + "VALUES (?, ?,?)")) {
+				statement.setString(1, page.getUuid());
+				statement.setString(2, page.getContent());
+				statement.setString(3, page.getXsd());
 				int result = statement.executeUpdate();
 				if (result != 1) {
 					throw new SQLException("Insertion error");
@@ -82,6 +67,7 @@ public class DBpagesDAO implements PagesDAO {
 			System.out.println("Connection error");
 			throw new RuntimeException(connectionException);
 		}
+
 	}
 
 	@Override
@@ -121,34 +107,13 @@ public class DBpagesDAO implements PagesDAO {
 			throw new RuntimeException(connectionException);
 		}
 
-	}
-
-	/*
-	 * return String array with content and xsd uuid values
-	 */
-	@Override
-	public String[] getXSLTParameters(String uuid) {
-		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
-			try (PreparedStatement statement = connection
-					.prepareStatement("SELECT content, xsd FROM XSLT WHERE uuid = ?")) {
-				statement.setString(1, uuid);
-				try (ResultSet result = statement.executeQuery()) {
-					result.next();
-					return new String[] { result.getString("content"), result.getString("xsd") };
-				}
-			} catch (SQLException queryException) {
-				System.out.println("Query error");
-				throw new RuntimeException(queryException);
-			}
-		} catch (SQLException connectionException) {
-			System.out.println("Connection error");
-			throw new RuntimeException(connectionException);
+		if (table.equals(PagesDAO.XSLT_TABLE_NAME)) {
+			this.deleteXSLTAssociated(uuid);
 		}
 
 	}
 
-	@Override
-	public void deleteXSLTAssociated(String uuid) {
+	private void deleteXSLTAssociated(String uuid) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection.prepareStatement("DELETE FROM XSLT WHERE xsd=?")) {
 				statement.setString(1, uuid);
@@ -165,16 +130,63 @@ public class DBpagesDAO implements PagesDAO {
 	}
 
 	@Override
-	public void addXSLTPage(String xsltUuid, String xsltContent, String xsdAssociated) {
+	public List<String> listUuidFromTable(String dbTable) {
+		List<String> toret = new ArrayList<>();
+		String query = "SELECT uuid FROM " + dbTable;
+		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+			try (Statement statement = connection.createStatement()) {
+				try (ResultSet result = statement.executeQuery(query)) {
+					while (result.next()) {
+						toret.add(result.getString("uuid"));
+					}
+				}
+			} catch (SQLException queryException) {
+				System.out.println("Query error");
+				throw new RuntimeException(queryException);
+			}
+		} catch (SQLException connectionException) {
+			System.out.println("Connection error");
+			throw new RuntimeException(connectionException);
+		}
+		return toret;
+	}
+
+	@Override
+	public Page getValue(String uuid, String dbTable) {
+		if (dbTable.equals(XSLT_TABLE_NAME)) {
+			return this.getXSLTParameters(uuid);
+		} else {
+
+			try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+				try (PreparedStatement statement = connection
+						.prepareStatement("SELECT content FROM " + dbTable + " WHERE uuid = ?")) {
+					statement.setString(1, uuid);
+					try (ResultSet result = statement.executeQuery()) {
+						result.next();
+						return new Page(uuid, result.getString("content"));
+					}
+				} catch (SQLException queryException) {
+					System.out.println("Query error");
+					throw new RuntimeException(queryException);
+				}
+			} catch (SQLException connectionException) {
+				System.out.println("Connection error");
+				throw new RuntimeException(connectionException);
+			}
+		}
+	}
+
+	/*
+	 * return String array with content and xsd uuid values
+	 */
+	private Page getXSLTParameters(String uuid) {
 		try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 			try (PreparedStatement statement = connection
-					.prepareStatement("INSERT INTO XSLT (uuid, content, xsd) " + "VALUES (?, ?,?)")) {
-				statement.setString(1, xsltUuid);
-				statement.setString(2, xsltContent);
-				statement.setString(3, xsdAssociated);
-				int result = statement.executeUpdate();
-				if (result != 1) {
-					throw new SQLException("Insertion error");
+					.prepareStatement("SELECT content, xsd FROM XSLT WHERE uuid = ?")) {
+				statement.setString(1, uuid);
+				try (ResultSet result = statement.executeQuery()) {
+					result.next();
+					return new Page(uuid, result.getString("content"), result.getString("xsd"));
 				}
 			} catch (SQLException queryException) {
 				System.out.println("Query error");

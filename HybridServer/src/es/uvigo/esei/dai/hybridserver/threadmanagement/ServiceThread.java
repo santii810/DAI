@@ -13,18 +13,18 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
 import es.uvigo.esei.dai.hybridserver.manager.DELETERequestManager;
 import es.uvigo.esei.dai.hybridserver.manager.GETRequestManager;
+import es.uvigo.esei.dai.hybridserver.manager.P2PManager;
 import es.uvigo.esei.dai.hybridserver.manager.POSTRequestManager;
 import es.uvigo.esei.dai.hybridserver.manager.RequestManager;
-import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
 public class ServiceThread implements Runnable {
 
+	private P2PManager p2pManager;
 	private Socket socket;
-	private PagesDAO pagesDAO;
 
-	public ServiceThread(Socket socket, PagesDAO pagesDAO) {
+	public ServiceThread(Socket socket, P2PManager p2pManager) {
 		this.socket = socket;
-		this.pagesDAO = pagesDAO;
+		this.p2pManager = p2pManager;
 	}
 
 	@Override
@@ -41,13 +41,13 @@ public class ServiceThread implements Runnable {
 				try {
 					switch (request.getMethod()) {
 					case GET:
-						manager = new GETRequestManager(request, response, pagesDAO);
+						manager = new GETRequestManager(request, response, p2pManager);
 						break;
 					case POST:
-						manager = new POSTRequestManager(request, response, pagesDAO);
+						manager = new POSTRequestManager(request, response, p2pManager);
 						break;
 					case DELETE:
-						manager = new DELETERequestManager(request, response, pagesDAO);
+						manager = new DELETERequestManager(request, response, p2pManager);
 						break;
 					default:
 						break;

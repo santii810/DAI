@@ -7,17 +7,27 @@ import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponse;
 import es.uvigo.esei.dai.hybridserver.http.HTTPResponseStatus;
 import es.uvigo.esei.dai.hybridserver.http.MIME;
-import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
 public abstract class RequestManager implements FileRequest {
-	protected HTTPRequest request;
-	protected HTTPResponse response;
-	protected PagesDAO pagesDAO;
+	public static void responseBadRequest(HTTPResponse response) {
+		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
+		response.setStatus(HTTPResponseStatus.S400);
+	}
 
-	public RequestManager(HTTPRequest request, HTTPResponse response, PagesDAO pagesDAO) {
+	protected P2PManager p2pManager;
+	protected HTTPRequest request;
+
+	protected HTTPResponse response;
+
+	public RequestManager(HTTPRequest request, HTTPResponse response, P2PManager p2pManager) {
 		this.request = request;
 		this.response = response;
-		this.pagesDAO = pagesDAO;
+		this.p2pManager = p2pManager;
+	}
+
+	protected String buildHtml(String content) {
+		response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
+		return "<html><head><meta charset=\"utf-8\"/></head><body>\r\n" + content + "</body></html>";
 	}
 
 	public void sendResponse() {
@@ -67,16 +77,6 @@ public abstract class RequestManager implements FileRequest {
 		String webPage = buildHtml(
 				"<h1>Hybrid Server</h1>" + "<h2>Santiago Gomez Vilar</h2>" + "<h2>Milagros Somoza Salinas</h2>");
 		response.setContent(webPage);
-	}
-
-	protected String buildHtml(String content) {
-		response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
-		return "<html><head><meta charset=\"utf-8\"/></head><body>\r\n" + content + "</body></html>";
-	}
-
-	public static void responseBadRequest(HTTPResponse response) {
-		response.setVersion(HTTPHeaders.HTTP_1_1.getHeader());
-		response.setStatus(HTTPResponseStatus.S400);
 	}
 
 }

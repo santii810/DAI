@@ -1,13 +1,13 @@
 package es.uvigo.esei.dai.hybridserver.manager;
 
 public interface FileRequest {
-	void sendResponse();
-
 	void manageHTMLRequest();
+
+	void manageXMLRequest();
 
 	void manageXSDRequest();
 
 	void manageXSLTRequest();
 
-	void manageXMLRequest();
+	void sendResponse();
 }
