@@ -10,9 +10,13 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.derby.tools.sysinfo;
+
+import es.uvigo.esei.dai.hybridserver.HybridServerService;
+
 public class HybridServerConnection {
 	private List<ServerConfiguration> serverConfigurations;
-	private static Map<ServerConfiguration, HybridServerService> hybridServerService;
+	private Map<ServerConfiguration, HybridServerService> hybridServerService;
 
 	public HybridServerConnection(List<ServerConfiguration> serverConfigurations) {
 		this.serverConfigurations = serverConfigurations;
@@ -31,14 +35,15 @@ public class HybridServerConnection {
 					hybridServerService.put(server, hs);
 
 				} catch (WebServiceException e) {
-					System.err.println("Servidor '" + server.getName() + "' caído");
+//					e.printStackTrace();
+					System.err.println("Down server: '" + server.getName() + "'");
 				}
 			}
 		}
 		return hybridServerService;
 	}
 	
-	public static Map<ServerConfiguration, HybridServerService> getServers(){
+	public  Map<ServerConfiguration, HybridServerService> getServers(){
 		return hybridServerService;
 	}
 }

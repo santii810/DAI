@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import org.apache.derby.tools.sysinfo;
+
+import es.uvigo.esei.dai.hybridserver.HybridServerService;
 import es.uvigo.esei.dai.hybridserver.model.Page;
 import es.uvigo.esei.dai.hybridserver.model.dao.PagesDAO;
 
-@WebService(endpointInterface = "es.uvigo.esei.dai.hybridserver.webService.HybridServerService", 
-	targetNamespace = "http://hybridserver.dai.esei.uvigo.es/", 
-	serviceName = "HybridServerService")
-//@WebService(endpointInterface = "es.uvigo.esei.dai.hybridServer.HybridServerService")
+@WebService(endpointInterface = "es.uvigo.esei.dai.hybridserver.HybridServerService", targetNamespace = "http://hybridserver.dai.esei.uvigo.es/", serviceName = "HybridServerService")
 public class HybridServerImplementation implements HybridServerService {
 	private PagesDAO dao;
 
@@ -19,9 +19,19 @@ public class HybridServerImplementation implements HybridServerService {
 	}
 
 	@Override
-	public Page getValue(String uuid, String dbTable) {
-		return this.dao.getValue(uuid, dbTable);
+	public String[] getValue(String uuid, String dbTable) {
+		Page page = this.dao.getValue(uuid, dbTable);
 
+		String[] toret = new String[0];
+		if (page != null) {
+			if (page.getXsd() == null) {
+				toret = new String[] { page.getUuid(), page.getContent(), null };
+			} else {
+				toret = new String[] { page.getUuid(), page.getContent(), page.getXsd() };
+			}
+		}
+		System.out.println("prueba" + toret);
+		return toret;
 	}
 
 	@Override
@@ -32,8 +42,8 @@ public class HybridServerImplementation implements HybridServerService {
 
 	@Override
 	public boolean containsUuid(String uuid, String dbTable) {
-		this.dao.containsUuid(uuid, dbTable);
-		return false;
+		return this.dao.containsUuid(uuid, dbTable);
+
 	}
 
 }

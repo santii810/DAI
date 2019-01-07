@@ -88,8 +88,9 @@ public class HybridServer {
 						Socket socket = serverSocket.accept();
 						if (stop)
 							break;
-						P2PManager p2pManager = new P2PManager(pagesDAO,
-								new HybridServerConnection(servers).connection());
+						HybridServerConnection hybridServerConnection = new HybridServerConnection(servers);
+						hybridServerConnection.connection();
+						P2PManager p2pManager = new P2PManager(pagesDAO, hybridServerConnection);
 						threadPool.execute(new ServiceThread(socket, p2pManager));
 					}
 				} catch (IOException e) {

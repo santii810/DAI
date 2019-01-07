@@ -1,6 +1,5 @@
-package es.uvigo.esei.dai.hybridserver.webService;
+package es.uvigo.esei.dai.hybridserver;
 
-import java.util.List;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -13,7 +12,7 @@ import es.uvigo.esei.dai.hybridserver.model.Page;
 @SOAPBinding(style = Style.RPC)
 public interface HybridServerService {
 	@WebMethod
-	public Page getValue(String uuid, String dbTable);
+	public String[] getValue(String uuid, String dbTable);
 
 	@WebMethod
 	public String[] listUuidFromTable(String dbTable);

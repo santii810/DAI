@@ -162,8 +162,10 @@ public class DBpagesDAO implements PagesDAO {
 						.prepareStatement("SELECT content FROM " + dbTable + " WHERE uuid = ?")) {
 					statement.setString(1, uuid);
 					try (ResultSet result = statement.executeQuery()) {
-						result.next();
-						return new Page(uuid, result.getString("content"));
+						if (result.next())
+							return new Page(uuid, result.getString("content"));
+						else
+							return null;
 					}
 				} catch (SQLException queryException) {
 					System.out.println("Query error");
