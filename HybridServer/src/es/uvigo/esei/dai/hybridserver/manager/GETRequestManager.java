@@ -67,7 +67,7 @@ public class GETRequestManager extends RequestManager {
 					String xsltRequested = request.getResourceParameters().get("xslt");
 					if (p2pManager.containsUuid(xsltRequested, PagesDAO.XSLT_TABLE_NAME)) {
 
-						Page parameters = p2pManager.getXSLTParameters(xsltRequested);
+						Page parameters = p2pManager.getValue(xsltRequested, PagesDAO.XSLT_TABLE_NAME);
 						String xml = p2pManager.getValue(uuidRequested, PagesDAO.XML_TABLE_NAME).getContent();
 						String xslt = parameters.getContent();
 						String xsd = p2pManager.getValue(parameters.getXsd(), PagesDAO.XSD_TABLE_NAME).getContent();
