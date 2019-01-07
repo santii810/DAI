@@ -1,6 +1,7 @@
 package es.uvigo.esei.dai.hybridserver.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,19 +20,28 @@ public class P2PManager {
 	public P2PManager(PagesDAO pagesDAO, Map<ServerConfiguration, HybridServerService> servers) {
 		this.pagesDAO = pagesDAO;
 		this.servers = servers;
-		if (this.servers.size() > 0) {
+		if (this.servers.isEmpty()) {
+			this.implementations = new HybridServerService[0];
+		} else {
 			this.implementations = new HybridServerService[servers.size()];
 		}
-
 	}
 
 	public void addPage(Page page, String dbTable) {
 		this.pagesDAO.addPage(page, dbTable);
 	}
 
-	public boolean containsUuid(String uuidRequested, String table) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean containsUuid(String uuidRequested, String dbTable) {
+		boolean toret = this.pagesDAO.containsUuid(uuidRequested, dbTable);
+		if (toret == false && this.servers != null) {
+			for (HybridServerService hybridServerService : this.getUpServers()) {
+				toret = hybridServerService.containsUuid(uuidRequested, dbTable);
+				if (toret)
+					break;
+			}
+		}
+		return toret;
+
 	}
 
 	public Page getValue(String uuidRequested, String dbTable) {
@@ -49,12 +59,14 @@ public class P2PManager {
 		return toret;
 	}
 
-	public Map<String, List<String>> listUuidFromTable(String dbTable) {
-		Map<String, List<String>> toret = new HashMap<String, List<String>>();
+	public HashMap<String, List<String>> listUuidFromTable(String dbTable) {
+		HashMap<String, List<String>> toret = new HashMap<String, List<String>>();
 		toret.put("Local Server", this.pagesDAO.listUuidFromTable(dbTable));
-		if (toret == null && this.servers != null) {
+		if (this.servers != null) {
 			for (HybridServerService hybridServerService : this.getUpServers()) {
-				toret = hybridServerService.listUuidFromTable(dbTable);
+				List<String> uuids = Arrays.asList(hybridServerService.listUuidFromTable(dbTable));
+				// TODO cambiar string
+				toret.put("Remote server", uuids);
 
 			}
 		}

@@ -1,6 +1,9 @@
 package es.uvigo.esei.dai.hybridserver.manager;
 
+import java.util.HashMap;
 import java.util.List;
+
+import com.sun.javafx.collections.MappingChange.Map;
 
 import es.uvigo.esei.dai.hybridserver.http.HTTPHeaders;
 import es.uvigo.esei.dai.hybridserver.http.HTTPRequest;
@@ -61,13 +64,25 @@ public abstract class RequestManager implements FileRequest {
 		}
 	}
 
-	protected String showPagesList(List<String> list) {
+	protected String showPagesMap(HashMap<String, List<String>> map) {
+		StringBuilder htmlString = new StringBuilder();
+		for (String key : map.keySet()) {
+			// TODO cambiar salida
+			htmlString.append("<h2>" + key + "</h2>");
+			htmlString.append(showPagesList(map.get(key)));
+			htmlString.append("<p>");
+		}
+		return htmlString.toString();
+	}
+
+	private String showPagesList(List<String> list) {
 		StringBuilder htmlString = new StringBuilder("<ul>");
 		for (String page : list) {
 			htmlString.append("<li><a href=\"http://localhost:8888/html?uuid=" + page + "\">");
 			htmlString.append(page);
 			htmlString.append("</a></li>\r\n");
 		}
+
 		htmlString.append("</ul>\r\n");
 		return this.buildHtml(htmlString.toString());
 	}

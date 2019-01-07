@@ -63,6 +63,7 @@ public class ServiceThread implements Runnable {
 					e.printStackTrace();
 				}
 			} catch (HTTPParseException e) {
+				e.printStackTrace();
 				RequestManager.responseBadRequest(response);
 			} finally {
 				OutputStream outputStream = socket.getOutputStream();

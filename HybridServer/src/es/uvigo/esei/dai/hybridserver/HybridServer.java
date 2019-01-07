@@ -75,9 +75,6 @@ public class HybridServer {
 	public void start() {
 		if (this.webService != null) {
 			hybridServerImplementation = new HybridServerImplementation(this.pagesDAO);
-			//TODO quitar
-			System.out.println("hola");
-			System.exit(0);
 			endPoint = Endpoint.publish(this.webService, this.hybridServerImplementation);
 		}
 

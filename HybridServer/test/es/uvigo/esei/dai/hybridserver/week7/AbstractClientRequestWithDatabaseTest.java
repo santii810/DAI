@@ -47,7 +47,7 @@ import es.uvigo.esei.dai.hybridserver.HybridServer;
 import es.uvigo.esei.dai.hybridserver.utils.JdbcTestCase;
 
 public abstract class AbstractClientRequestWithDatabaseTest extends JdbcTestCase {
-	@Rule
+//	@Rule
 	public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
 
 	protected String invalidUUID;

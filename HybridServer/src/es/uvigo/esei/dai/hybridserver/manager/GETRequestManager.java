@@ -33,7 +33,7 @@ public class GETRequestManager extends RequestManager {
 		if (request.getResourceParameters().isEmpty()) {
 			// Muestro lista e paginas
 			response.setStatus(HTTPResponseStatus.S200);
-			response.setContent(showPagesList(p2pManager.listUuidFromTable(dbTable)));
+			response.setContent(showPagesMap(p2pManager.listUuidFromTable(dbTable)));
 		} else if (request.getResourceParameters().containsKey("uuid")) {
 			String uuidRequested = request.getResourceParameters().get("uuid");
 			if (p2pManager.containsUuid(uuidRequested, dbTable)) {
@@ -58,7 +58,7 @@ public class GETRequestManager extends RequestManager {
 		if (request.getResourceParameters().isEmpty()) {
 			// Muestro lista e paginas
 			response.setStatus(HTTPResponseStatus.S200);
-			response.setContent(showPagesList(p2pManager.listUuidFromTable(PagesDAO.XML_TABLE_NAME)));
+			response.setContent(showPagesMap(p2pManager.listUuidFromTable(PagesDAO.XML_TABLE_NAME)));
 		} else if (request.getResourceParameters().containsKey("uuid")) {
 			String uuidRequested = request.getResourceParameters().get("uuid");
 			if (p2pManager.containsUuid(uuidRequested, PagesDAO.XML_TABLE_NAME)) {

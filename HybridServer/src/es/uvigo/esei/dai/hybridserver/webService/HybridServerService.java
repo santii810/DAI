@@ -16,5 +16,8 @@ public interface HybridServerService {
 	public Page getValue(String uuid, String dbTable);
 
 	@WebMethod
-	public List<String> listUuidFromTable(String dbTable);
+	public String[] listUuidFromTable(String dbTable);
+
+	@WebMethod
+	public boolean containsUuid(String uuid, String dbTable);
 }

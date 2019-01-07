@@ -9,7 +9,6 @@ public class DELETERequestManager extends RequestManager {
 
 	public DELETERequestManager(HTTPRequest request, HTTPResponse response, P2PManager p2pManager) {
 		super(request, response, p2pManager);
-		// TODO Auto-generated constructor stub
 	}
 
 	private void manageGeneralRequest(String requestType, String table) {

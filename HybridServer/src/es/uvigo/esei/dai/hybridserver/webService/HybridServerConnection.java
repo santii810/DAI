@@ -11,17 +11,17 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 public class HybridServerConnection {
-	List<ServerConfiguration> servers;
-	Map<ServerConfiguration, HybridServerService> hybridServerService;
+	private List<ServerConfiguration> serverConfigurations;
+	private static Map<ServerConfiguration, HybridServerService> hybridServerService;
 
-	public HybridServerConnection(List<ServerConfiguration> servers) {
-		this.servers = servers;
+	public HybridServerConnection(List<ServerConfiguration> serverConfigurations) {
+		this.serverConfigurations = serverConfigurations;
 		hybridServerService = new HashMap<>();
 	}
 
 	public Map<ServerConfiguration, HybridServerService> connection() throws MalformedURLException {
-		if (this.servers != null) {
-			for (ServerConfiguration server : servers) {
+		if (this.serverConfigurations != null) {
+			for (ServerConfiguration server : serverConfigurations) {
 				URL url = new URL(server.getWsdl());
 				QName name = new QName(server.getNamespace(), "HybridServerService");
 
@@ -35,6 +35,10 @@ public class HybridServerConnection {
 				}
 			}
 		}
+		return hybridServerService;
+	}
+	
+	public static Map<ServerConfiguration, HybridServerService> getServers(){
 		return hybridServerService;
 	}
 }
