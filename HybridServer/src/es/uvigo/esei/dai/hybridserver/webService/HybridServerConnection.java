@@ -35,7 +35,7 @@ public class HybridServerConnection {
 					hybridServerService.put(server, hs);
 
 				} catch (WebServiceException e) {
-//					e.printStackTrace();
+					e.printStackTrace();
 					System.err.println("Down server: '" + server.getName() + "'");
 				}
 			}
