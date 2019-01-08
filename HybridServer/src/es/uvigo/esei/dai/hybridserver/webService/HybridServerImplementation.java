@@ -30,7 +30,6 @@ public class HybridServerImplementation implements HybridServerService {
 				toret = new String[] { page.getUuid(), page.getContent(), page.getXsd() };
 			}
 		}
-		System.out.println("prueba" + toret);
 		return toret;
 	}
 

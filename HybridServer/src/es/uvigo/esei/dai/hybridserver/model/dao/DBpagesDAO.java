@@ -187,8 +187,10 @@ public class DBpagesDAO implements PagesDAO {
 					.prepareStatement("SELECT content, xsd FROM XSLT WHERE uuid = ?")) {
 				statement.setString(1, uuid);
 				try (ResultSet result = statement.executeQuery()) {
-					result.next();
-					return new Page(uuid, result.getString("content"), result.getString("xsd"));
+					if (result.next())
+						return new Page(uuid, result.getString("content"), result.getString("xsd"));
+					else
+						return null;
 				}
 			} catch (SQLException queryException) {
 				System.out.println("Query error");

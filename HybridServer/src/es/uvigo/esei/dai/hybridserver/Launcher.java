@@ -16,6 +16,7 @@ public class Launcher {
 				new HybridServer(configuration.load(new File(fileName))).start();
 			} catch (Exception e1) {
 				System.out.println("Error reading configuration file");
+				e1.printStackTrace();
 			}
 
 			// Properties properties = new Properties();

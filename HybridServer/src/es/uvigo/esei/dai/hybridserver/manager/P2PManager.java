@@ -16,13 +16,13 @@ public class P2PManager {
 
 	private PagesDAO pagesDAO;
 	private HybridServerConnection hybridServerConnection;
-	private HybridServerService[] implementations;
+	private Map<String, HybridServerService> implementations;
 
 	public P2PManager(PagesDAO pagesDAO, HybridServerConnection hybridServerConnection) {
 		this.pagesDAO = pagesDAO;
 		this.hybridServerConnection = hybridServerConnection;
 		if (hybridServerConnection.getServers().isEmpty()) {
-			this.implementations = new HybridServerService[0];
+			this.implementations = new HashMap<String, HybridServerService>();
 		}
 	}
 
@@ -33,8 +33,8 @@ public class P2PManager {
 	public boolean containsUuid(String uuidRequested, String dbTable) {
 		boolean toret = this.pagesDAO.containsUuid(uuidRequested, dbTable);
 		if (toret == false && hybridServerConnection.getServers() != null) {
-			for (HybridServerService hybridServerService : this.getUpServers()) {
-				toret = hybridServerService.containsUuid(uuidRequested, dbTable);
+			for (String serverName : this.getUpServers().keySet()) {
+				toret = this.getUpServers().get(serverName).containsUuid(uuidRequested, dbTable);
 				if (toret)
 					break;
 			}
@@ -46,9 +46,9 @@ public class P2PManager {
 	public Page getValue(String uuidRequested, String dbTable) {
 		Page toret = this.pagesDAO.getValue(uuidRequested, dbTable);
 		if (toret == null && hybridServerConnection.getServers() != null) {
-			for (HybridServerService hybridServerService : this.getUpServers()) {
-				String[] page = hybridServerService.getValue(uuidRequested, dbTable);
-				
+			for (String serverName : this.getUpServers().keySet()) {
+				String[] page = this.getUpServers().get(serverName).getValue(uuidRequested, dbTable);
+
 				if (page.length != 0) {
 					toret = new Page(page[0], page[1], page[2]);
 					// Se inserta una copia en la base de datos local
@@ -64,11 +64,10 @@ public class P2PManager {
 		HashMap<String, List<String>> toret = new HashMap<String, List<String>>();
 		toret.put("Local Server", this.pagesDAO.listUuidFromTable(dbTable));
 		if (hybridServerConnection.getServers() != null) {
-			for (HybridServerService hybridServerService : this.getUpServers()) {
-				List<String> uuids = Arrays.asList(hybridServerService.listUuidFromTable(dbTable));
+			for (String serverName : this.getUpServers().keySet()) {
+				List<String> uuids = Arrays.asList(this.getUpServers().get(serverName).listUuidFromTable(dbTable));
 				// TODO cambiar string
-				toret.put("Remote server", uuids);
-
+				toret.put(serverName, uuids);
 			}
 		}
 		return toret;
@@ -78,19 +77,12 @@ public class P2PManager {
 		this.pagesDAO.delete(uuid, dbTable);
 	}
 
-	private HybridServerService[] getUpServers() {
-//		int i = 0;
-//		Collection<HybridServerService> list = this.servers.values();
-//		for (HybridServerService hybridServerService : list) {
-//			this.services[i] = hybridServerService;
-//			i++;
-//		}
-//		return this.services;	
-
-		ArrayList<HybridServerService> list = new ArrayList<>(hybridServerConnection.getServers().values());
-		this.implementations = new HybridServerService[hybridServerConnection.getServers().size()];
-		for (int i = 0; i < list.size(); i++) {
-			this.implementations[i] = list.get(i);
+	private Map<String, HybridServerService> getUpServers() {
+		this.implementations = new HashMap<>();
+		for (ServerConfiguration sc : hybridServerConnection.getServers().keySet()) {
+			String serverName = sc.getName();
+			HybridServerService hybridServerService = hybridServerConnection.getServers().get(sc);
+			this.implementations.put(serverName, hybridServerService);
 		}
 		return this.implementations;
 	}
