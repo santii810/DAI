@@ -6,18 +6,10 @@ public class Launcher {
 
 	public static void main(String[] args) {
 
-		if (args.length > 1)
-			System.out.println("Invalid number of arguments");
+		if (args.length == 0)
+			new HybridServer().start();
 		if (args.length == 1) {
-			String fileName = args[0];
-
-			XMLConfigurationLoader configuration = new XMLConfigurationLoader();
-			try {
-				new HybridServer(configuration.load(new File(fileName))).start();
-			} catch (Exception e1) {
-				System.out.println("Error reading configuration file");
-				e1.printStackTrace();
-			}
+			runServer(args[0]);
 
 			// Properties properties = new Properties();
 			// try (FileInputStream inStream = new FileInputStream(fileName)) {
@@ -27,9 +19,24 @@ public class Launcher {
 			// System.out.println("Error reading Properties file");
 			// }
 
-		} else {
-			new HybridServer().start();
 		}
+		if (args.length > 1) {
+			for (int i = 0; i < args.length; i++) {
+				runServer(args[i]);
+			}
+		}
+//		if (args.length > 1)
+//			System.out.println("Invalid number of arguments");
 
+	}
+
+	private static void runServer(String fileName) {
+		XMLConfigurationLoader configuration = new XMLConfigurationLoader();
+		try {
+			new HybridServer(configuration.load(new File(fileName))).start();
+		} catch (Exception e1) {
+			System.out.println("Error reading configuration file");
+			e1.printStackTrace();
+		}
 	}
 }
