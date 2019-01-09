@@ -25,8 +25,8 @@ public class Launcher {
 				runServer(args[i]);
 			}
 		}
-//		if (args.length > 1)
-//			System.out.println("Invalid number of arguments");
+		if (args.length > 4)
+			System.out.println("Invalid number of arguments");
 
 	}
 
