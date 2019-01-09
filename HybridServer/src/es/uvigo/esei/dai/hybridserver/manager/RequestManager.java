@@ -67,7 +67,6 @@ public abstract class RequestManager implements FileRequest {
 	protected String showPagesMap(HashMap<String, List<String>> map) {
 		StringBuilder htmlString = new StringBuilder();
 		for (String key : map.keySet()) {
-			// TODO cambiar salida
 			htmlString.append("<h2>" + key + "</h2>");
 			htmlString.append(showPagesList(map.get(key)));
 			htmlString.append("<p>");

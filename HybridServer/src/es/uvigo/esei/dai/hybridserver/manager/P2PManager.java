@@ -66,7 +66,6 @@ public class P2PManager {
 		if (hybridServerConnection.getServers() != null) {
 			for (String serverName : this.getUpServers().keySet()) {
 				List<String> uuids = Arrays.asList(this.getUpServers().get(serverName).listUuidFromTable(dbTable));
-				// TODO cambiar string
 				toret.put(serverName, uuids);
 			}
 		}

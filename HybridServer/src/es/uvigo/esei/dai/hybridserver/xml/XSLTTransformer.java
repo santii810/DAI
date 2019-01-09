@@ -21,8 +21,10 @@ public class XSLTTransformer {
 	/**
 	 * Transform XML using XSLT
 	 * 
-	 * @param xml  XML to be transformed
-	 * @param xslt XSLT to transform
+	 * @param xml
+	 *            XML to be transformed
+	 * @param xslt
+	 *            XSLT to transform
 	 * @throws TransformerException
 	 */
 	public static String transform(String xml, String xslt) throws TransformerException {

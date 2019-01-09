@@ -43,7 +43,7 @@ import es.uvigo.esei.dai.hybridserver.utils.JdbcTestCase;
 import es.uvigo.esei.dai.hybridserver.webService.ServerConfiguration;
 
 public class ConvertedXMLTest extends JdbcTestCase {
-//	@Rule
+	// @Rule
 	public final TestRule globalTimeout = new Timeout(5, TimeUnit.SECONDS);
 
 	protected String invalidXSLT;

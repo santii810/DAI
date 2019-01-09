@@ -80,16 +80,13 @@ public class GETRequestManager extends RequestManager {
 							response.setContent(xmlTransformed);
 							response.putParameter("Content-Type", MIME.TEXT_HTML.getMime());
 						} catch (SAXException | ParserConfigurationException | IOException e) {
-							
+
 							e.printStackTrace();
 							response.setStatus(HTTPResponseStatus.S400);
 						} catch (TransformerException e) {
-							System.out.println("problema");
 							response.setStatus(HTTPResponseStatus.S500);
 							e.printStackTrace();
-						}catch (Exception e) {
-							//TODO cambiar
-							System.out.println("exception no controlada");
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} else {

@@ -36,14 +36,14 @@ public class HybridServerConnection {
 
 				} catch (WebServiceException e) {
 					e.printStackTrace();
-					System.err.println("Down server: '" + server.getName() + "'");
+					System.err.println("Server '" + server.getName() + "' is down");
 				}
 			}
 		}
 		return hybridServerService;
 	}
-	
-	public  Map<ServerConfiguration, HybridServerService> getServers(){
+
+	public Map<ServerConfiguration, HybridServerService> getServers() {
 		return hybridServerService;
 	}
 }
