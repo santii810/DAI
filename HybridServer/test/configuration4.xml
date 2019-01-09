@@ -25,5 +25,8 @@
 		<server name="Server 1" wsdl="http://localhost:20001/hs?wsdl"
 			namespace="http://hybridserver.dai.esei.uvigo.es/" service="HybridServerService"
 			httpAddress="http://localhost:10001/" />
+		<server name="Down Server" wsdl="http://localhost:20005/hs?wsdl"
+			namespace="http://hybridserver.dai.esei.uvigo.es/" service="HybridServerService"
+			httpAddress="http://localhost:10005/" />
 	</servers>
 </configuration>
