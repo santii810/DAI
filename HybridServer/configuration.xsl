@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-	xmlns:hs="http://www.esei.uvigo.es/dai/hybridserver/configuration">
+	xmlns:hs="http://www.esei.uvigo.es/dai/hybridserver">
 	<xsl:output method="html" indent="yes" encoding="utf-8" />
 	
 	<xsl:template match="/">
@@ -12,7 +12,6 @@
 			</head>
 			<body>
 				<h1>Configuration</h1>
-				<br/>
 				<h2>Connections</h2>
 				<xsl:apply-templates select="hs:configuration/hs:connections" />
 				<h2>Database</h2>
