@@ -2,7 +2,7 @@
 <?xml-stylesheet type='text/xsl' href='./configuration.xsl'?>
 <configuration xmlns="http://www.esei.uvigo.es/dai/hybridserver"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	hs:schemaLocation="http://www.esei.uvigo.es/dai/hybridserver configuration.xsd"
+	xsi:schemaLocation="http://www.esei.uvigo.es/dai/hybridserver configuration.xsd"
   >
 	<connections>
 		<http>10001</http>

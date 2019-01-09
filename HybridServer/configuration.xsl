@@ -12,6 +12,7 @@
 			</head>
 			<body>
 				<h1>Configuration</h1>
+				<br/>
 				<h2>Connections</h2>
 				<xsl:apply-templates select="hs:configuration/hs:connections" />
 				<h2>Database</h2>
@@ -21,6 +22,9 @@
 			</body>
 		</html>
 	</xsl:template>
+	
+	
+	
 	<xsl:template match="hs:connections">
 		<div>
 			<ul>
